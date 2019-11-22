@@ -3,6 +3,7 @@ package home;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.io.FileReader;
 import java.util.Comparator;
@@ -18,7 +19,7 @@ public class ListingDbImpl implements ListingsDb {
         JSONParser jsonParser = new JSONParser();
 
         try {
-            FileReader reader = new FileReader("C:\\data\\AuctionDb.json");
+            FileReader reader = new FileReader("C:\\data\\auctionjson.json");
             jsonObject = (JSONObject) jsonParser.parse(reader);
             reader.close();
         } catch (Exception e) {
@@ -30,7 +31,7 @@ public class ListingDbImpl implements ListingsDb {
 
     @Override
     public void addDataFromJson(JSONObject jsonData) {
-        ahListings = JsonToPojosUtil.jsonToListing(jsonData);
+        ahListings = JsonToPojosUtil.jsonToListing((JSONObject) jsonData.get("AuctionDBSaved"));
     }
 
     @Override

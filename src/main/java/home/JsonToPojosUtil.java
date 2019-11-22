@@ -12,9 +12,11 @@ public class JsonToPojosUtil {
     public static List<Listing> jsonToListing(JSONObject jsonObject) {
         List<Listing> convertedListings = new LinkedList<>();
 
-        Map<String, String> itemIdToName = getItemIdToName(jsonObject);
 
-        String auctions = (String) ((JSONObject) ((JSONArray) jsonObject.get("ah")).get(0)).get("data");
+        Map<String, String> itemIdToName = getItemIdToName(jsonObject);
+        JSONObject latestData = getLatestScan(jsonObject);
+
+        String auctions = (String) latestData.get("data");
         for (String item : auctions.split(", ")) {
             String[] details = item.split("!");
             String itemName = itemIdToName.get(details[0]);
@@ -44,6 +46,19 @@ public class JsonToPojosUtil {
         }
 
         return convertedListings;
+    }
+
+    private static JSONObject getLatestScan(JSONObject jsonObject) {
+        JSONObject latest = null;
+        for (Object object : (JSONArray) jsonObject.get("ah")) {
+            JSONObject jsonEntry = (JSONObject) object;
+            if (latest == null) {
+                latest = jsonEntry;
+            } else if ((Long) latest.get("ts") < (Long) jsonEntry.get("ts")) {
+                latest = jsonEntry;
+            }
+        }
+        return latest;
     }
 
     private static Map<String, String> getItemIdToName(JSONObject jsonObject) {

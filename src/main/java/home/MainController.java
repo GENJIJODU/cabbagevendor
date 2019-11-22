@@ -21,6 +21,12 @@ public class MainController {
         this.craftingDb = craftingDb;
     }
 
+    @GetMapping("/items/{itemName}")
+    @ResponseBody
+    public List<Listing> getItem(@PathVariable String itemName) {
+        return listingsDb.getListingsByName(itemName);
+    }
+
     @GetMapping("/crafting/{profession}")
     @ResponseBody
     public List<ProfitEntry> getMostProfitable(@PathVariable String profession) {
