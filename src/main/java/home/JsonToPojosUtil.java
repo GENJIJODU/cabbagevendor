@@ -17,6 +17,7 @@ public class JsonToPojosUtil {
         JSONObject latestData = getLatestScan(jsonObject);
 
         String auctions = (String) latestData.get("data");
+        Long timestamp = (Long) latestData.get("ts");
         for (String item : auctions.split(", ")) {
             String[] details = item.split("!");
             String itemName = itemIdToName.get(details[0]);
@@ -40,7 +41,7 @@ public class JsonToPojosUtil {
                         unitPrice = 999999999;
                     }
 
-                    convertedListings.add(new Listing(itemName, username, numStacks, stackSize, bidPrice, buyoutPrice, unitPrice, 0l));
+                    convertedListings.add(new Listing(itemName, username, numStacks, stackSize, bidPrice, buyoutPrice, unitPrice, timestamp));
                 }
             }
         }
