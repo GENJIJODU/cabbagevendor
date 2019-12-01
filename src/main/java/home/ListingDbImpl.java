@@ -3,14 +3,13 @@ package home;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.stereotype.Service;
+import sun.reflect.generics.tree.Tree;
 
 import java.io.FileReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -52,6 +51,101 @@ public class ListingDbImpl implements ListingsDb {
     }
 
     @Override
+    public ItemPageData getItemPageData(String name) {
+        ItemPageData itemPageData = new ItemPageData();
+
+        Long weeklyArray[][] = weeklyPriceArray(name);
+        Long weeklyQuantity[][] = weeklyQuantity(name);
+        Long latestTs = weeklyArray[weeklyArray.length-1][0];
+
+        Map<String, Integer> weeklySellers = getWeeklySellers(name, latestTs);
+        Map<String, Integer> monthlySellers = getWeeklySellers(name, latestTs);
+        return new ItemPageData(
+                weeklyArray[weeklyArray.length-1][1].intValue(),
+                weeklyQuantity[weeklyQuantity.length-1][1].intValue(),
+                weeklyArray,
+                weeklyQuantity,
+                weeklyArray,
+                weeklyQuantity,
+                weeklySellers,
+                monthlySellers);
+    }
+
+    private Map<String, Integer> getWeeklySellers(String name, Long ts) {
+        Map<String, Integer> sellers = new HashMap<>();
+        for (Listing listing : getListingsByName(name)) {
+            if (listing.getDate() == ts) {
+                Integer total = listing.getNumPerStack() * listing.getNumStacks();
+                if (sellers.get(listing.getUserName()) == null) {
+                    sellers.put(listing.getUserName(), total);
+                } else {
+                    Integer newTotal = sellers.get(listing.getUserName()) + total;
+                    sellers.put(listing.getUserName(), newTotal);
+                }
+            }
+        }
+
+        LinkedHashMap<String, Integer> sortedSellers = new LinkedHashMap<>();
+        List<Map.Entry<String, Integer>> sortedQuantities = new ArrayList<>(sellers.entrySet());
+        sortedQuantities.sort(Map.Entry.comparingByValue());
+
+        if (sortedQuantities.size() > 10) {
+            sortedQuantities = sortedQuantities.subList(sortedQuantities.size()-10, sortedQuantities.size());
+        }
+        for (Map.Entry<String, Integer> entry : sortedQuantities) {
+                sortedSellers.put(entry.getKey(), entry.getValue());
+        }
+        return sortedSellers;
+    }
+
+    public Long[][] weeklyPriceArray(String name) {
+        Map<Long, Integer> result = new HashMap<>();
+        for (Listing listing : getListingsByName(name)) {
+            if (result.get(listing.getDate())==null) {
+                result.put(listing.getDate(), listing.getUnitBuyout());
+            } else if (listing.getUnitBuyout() < result.get(listing.getDate())) {
+                result.put(listing.getDate(), listing.getUnitBuyout());
+            }
+        }
+
+        Long[][] outArray = new Long[result.keySet().size()][2];
+        int count = 0;
+        List<Long> list = new ArrayList<>(result.keySet());
+        Collections.sort(list);
+        for (Long ts : list) {
+            outArray[count][0] = ts;
+            outArray[count][1] = Long.valueOf(result.get(ts));
+            count++;
+        }
+        return outArray;
+    }
+
+    public Long[][] weeklyQuantity(String name) {
+        Map<Long, Integer> result = new HashMap<>();
+        for (Listing listing : getListingsByName(name)) {
+            Integer currentTotal = result.get(listing.getDate());
+            Integer itemsinListing = listing.getNumPerStack()* listing.getNumStacks();
+            if (currentTotal==null) {
+                result.put(listing.getDate(), itemsinListing);
+            } else {
+                Integer newTotal = currentTotal + (itemsinListing);
+                result.put(listing.getDate(), newTotal);
+            }
+        }
+
+        Long[][] outArray = new Long[result.keySet().size()][2];
+        int count = 0;
+        List<Long> list = new ArrayList<>(result.keySet());
+        Collections.sort(list);
+        for (Long ts : list) {
+            outArray[count][0] = ts;
+            outArray[count][1] = Long.valueOf(result.get(ts));
+            count++;
+        }
+        return outArray;
+    }
+
+    @Override
     public List<Listing> getListingsByName(String itemName) {
         return ahListings
                 .stream()
@@ -68,27 +162,13 @@ public class ListingDbImpl implements ListingsDb {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public Integer getPriceForItem(String itemName) {
-        return ahListings
-                .stream()
-                .filter(listing -> listing.getItemName().equals(itemName))
-                .sorted(unitPriceComparator)
-                .findFirst()
-                .get()
-                .getUnitBuyout();
-    }
-
-    Comparator<Listing> unitPriceComparator = new Comparator<Listing>() {
-        @Override
-        public int compare(Listing o1, Listing o2) {
-            if (o1.getUnitBuyout() > o2.getUnitBuyout()) {
-                return 1;
-            } else if (o1.getUnitBuyout() < o2.getUnitBuyout()){
-                return -1;
-            } else {
-                return 0;
-            }
+    Comparator<Listing> unitPriceComparator = (o1, o2) -> {
+        if (o1.getUnitBuyout() > o2.getUnitBuyout()) {
+            return 1;
+        } else if (o1.getUnitBuyout() < o2.getUnitBuyout()){
+            return -1;
+        } else {
+            return 0;
         }
     };
 }

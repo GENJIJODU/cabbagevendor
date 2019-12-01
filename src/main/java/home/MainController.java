@@ -27,37 +27,11 @@ public class MainController {
         return listingsDb.getListingsByName(itemName);
     }
 
-    @GetMapping("/crafting/{profession}")
+    @GetMapping("pageData/{itemName}")
     @ResponseBody
-    public List<ProfitEntry> getMostProfitable(@PathVariable String profession) {
-        return getMostProfitable();
+    public ItemPageData getWeeklyPrices(@PathVariable String itemName) {
+        return listingsDb.getItemPageData(itemName);
     }
 
-    public List<ProfitEntry> getMostProfitable() {
-        List<ProfitEntry> result = new LinkedList<>();
-        for (Recipe recipe : craftingDb.getRecipeByProfession("Alchemy")) {
-            result.add(getProfit(recipe));
-        }
-        result.sort((o1, o2) -> {
-            if (o1.getProvfit() > o2.getProvfit()) {
-                return 1;
-            } else if (o1.getProvfit() < o2.getProvfit()) {
-                return -1;
-            } else {
-                return 0;
-            }
-        });
 
-        return result;
-    }
-
-    public ProfitEntry getProfit(Recipe recipe) {
-        Integer cost = 0;
-        for (Map.Entry<String, Integer> ingredient : recipe.getAhIngredients().entrySet()) {
-            cost += listingsDb.getPriceForItem(ingredient.getKey()) * ingredient.getValue();
-        }
-
-        Integer revenue = listingsDb.getPriceForItem(recipe.getProduct());
-        return new ProfitEntry(recipe, cost, revenue);
-    }
 }

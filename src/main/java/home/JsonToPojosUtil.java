@@ -17,7 +17,7 @@ public class JsonToPojosUtil {
         JSONObject latestData = getLatestScan(jsonObject);
 
         String auctions = (String) latestData.get("data");
-        Long timestamp = (Long) latestData.get("ts");
+        Long timestamp = ((Long) latestData.get("ts") * 1000);
         for (String item : auctions.split(", ")) {
             String[] details = item.split("!");
             String itemName = itemIdToName.get(details[0]);
@@ -29,19 +29,14 @@ public class JsonToPojosUtil {
                     String username = userListings[g].split("/")[0];
 
                     String[] pricingInfo = userListings[g].split("/")[1].split(",");
-                    int numStacks = Integer.parseInt(pricingInfo[0]);
-                    int stackSize = Integer.parseInt(pricingInfo[1]);
-                    int bidPrice = Integer.parseInt(pricingInfo[2]);
-                    int buyoutPrice = bidPrice;
-                    int unitPrice;
                     if (pricingInfo.length == 4) {
-                        buyoutPrice = Integer.parseInt(pricingInfo[3]);
-                        unitPrice = buyoutPrice/stackSize;
-                    } else {
-                        unitPrice = 999999999;
+                        int numStacks = Integer.parseInt(pricingInfo[0]);
+                        int stackSize = Integer.parseInt(pricingInfo[1]);
+                        int bidPrice = Integer.parseInt(pricingInfo[3]);
+                        int buyoutPrice = bidPrice;
+                        int unitPrice = buyoutPrice/stackSize;
+                        convertedListings.add(new Listing(itemName, username, numStacks, stackSize, bidPrice, buyoutPrice, unitPrice, timestamp));
                     }
-
-                    convertedListings.add(new Listing(itemName, username, numStacks, stackSize, bidPrice, buyoutPrice, unitPrice, timestamp));
                 }
             }
         }
