@@ -3,12 +3,12 @@ package home;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.stereotype.Service;
-import sun.reflect.generics.tree.Tree;
 
 import java.io.FileReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -52,16 +52,17 @@ public class ListingDbImpl implements ListingsDb {
 
     @Override
     public ItemPageData getItemPageData(String name) {
-        ItemPageData itemPageData = new ItemPageData();
-
         Long weeklyArray[][] = weeklyPriceArray(name);
         Long weeklyQuantity[][] = weeklyQuantity(name);
         Long latestTs = weeklyArray[weeklyArray.length-1][0];
+        Double goldPrice = weeklyArray[weeklyArray.length-1][1].doubleValue() / 10000;
 
-        Map<String, Integer> weeklySellers = getWeeklySellers(name, latestTs);
-        Map<String, Integer> monthlySellers = getWeeklySellers(name, latestTs);
+
+        Map<String, Integer> weeklySellers = getSellersForTime(name, latestTs);
+        Map<String, Integer> monthlySellers = getSellersForTime(name, latestTs);
         return new ItemPageData(
-                weeklyArray[weeklyArray.length-1][1].intValue(),
+                name,
+                goldPrice,
                 weeklyQuantity[weeklyQuantity.length-1][1].intValue(),
                 weeklyArray,
                 weeklyQuantity,
@@ -71,7 +72,7 @@ public class ListingDbImpl implements ListingsDb {
                 monthlySellers);
     }
 
-    private Map<String, Integer> getWeeklySellers(String name, Long ts) {
+    private Map<String, Integer> getSellersForTime(String name, Long ts) {
         Map<String, Integer> sellers = new HashMap<>();
         for (Listing listing : getListingsByName(name)) {
             if (listing.getDate() == ts) {

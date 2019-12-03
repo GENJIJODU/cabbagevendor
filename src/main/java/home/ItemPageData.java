@@ -1,11 +1,11 @@
 package home;
 
 import java.util.Map;
-import java.util.Objects;
 
 public class ItemPageData {
 
-    private Integer price;
+    private String itemName;
+    private Double price;
     private Integer quantity;
     private Long[][] weeklyPrice;
     private Long[][] weeklyQuantity;
@@ -17,7 +17,8 @@ public class ItemPageData {
     public ItemPageData() {
     }
 
-    public ItemPageData(Integer price, Integer quantity, Long[][] weeklyPrice, Long[][] weeklyQuantity, Long[][] monthlyPrice, Long[][] monthlyQuantity, Map<String, Integer> weeklySellers, Map<String, Integer> monthlySellers) {
+    public ItemPageData(String itemName, Double price, Integer quantity, Long[][] weeklyPrice, Long[][] weeklyQuantity, Long[][] monthlyPrice, Long[][] monthlyQuantity, Map<String, Integer> weeklySellers, Map<String, Integer> monthlySellers) {
+        this.itemName = itemName;
         this.price = price;
         this.quantity = quantity;
         this.weeklyPrice = weeklyPrice;
@@ -28,11 +29,19 @@ public class ItemPageData {
         this.monthlySellers = monthlySellers;
     }
 
-    public Integer getPrice() {
+    public String getItemName() {
+        return itemName;
+    }
+
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
+    }
+
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(Integer price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 
