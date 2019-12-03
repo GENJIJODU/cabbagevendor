@@ -13,7 +13,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class ListingDbImpl implements ListingsDb {
+public class ListingDbImpl {
     private List<Listing> ahListings = new LinkedList<>();
 
     public ListingDbImpl() {
@@ -40,17 +40,17 @@ public class ListingDbImpl implements ListingsDb {
         }
     }
 
-    @Override
+
     public void addDataFromJson(JSONObject jsonData) {
         ahListings.addAll(JsonToPojosUtil.jsonToListing((JSONObject) jsonData.get("AuctionDBSaved")));
     }
 
-    @Override
+
     public List<Listing> getAllListings() {
         return ahListings;
     }
 
-    @Override
+
     public ItemPageData getItemPageData(String name) {
         Long weeklyArray[][] = weeklyPriceArray(name);
         Long weeklyQuantity[][] = weeklyQuantity(name);
@@ -146,7 +146,7 @@ public class ListingDbImpl implements ListingsDb {
         return outArray;
     }
 
-    @Override
+
     public List<Listing> getListingsByName(String itemName) {
         return ahListings
                 .stream()
@@ -155,7 +155,7 @@ public class ListingDbImpl implements ListingsDb {
                 .collect(Collectors.toList());
     }
 
-    @Override
+
     public List<Listing> getListingByUser(String userName) {
         return ahListings
                 .stream()
