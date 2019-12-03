@@ -84,4 +84,18 @@ public class Listing {
     public void setDate(Long date) {
         this.date = date;
     }
+
+    @Override
+    public String toString() {
+        return "Listing{" +
+                "itemName='" + itemName + '\'' +
+                ", userName='" + userName + '\'' +
+                ", numStacks=" + numStacks +
+                ", numPerStack=" + numPerStack +
+                ", totalBid=" + totalBid +
+                ", totalBuyout=" + totalBuyout +
+                ", unitBuyout=" + unitBuyout +
+                ", date=" + date +
+                '}';
+    }
 }

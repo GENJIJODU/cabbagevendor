@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title>The Cabbage Report</title>
+<style>
+	.container {
+		width: 90%;
+		margin-left: auto;
+		margin-right: auto;
+	}
+</style>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+
+<!-- Optional theme -->
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" />
+</head>
+<body>
+	<h1 style="font-family:poynter; font-size: 40pt" align="center">
+		THE CABBAGE REPORT.
+	</h1>
+	<div class="container">
+		<script src="https://code.highcharts.com/highcharts.js"></script>
+		<script src="https://code.highcharts.com/modules/exporting.js"></script>
+
+		<div align = "right">
+			<form action="/itemPage" method="post">
+				Item: <input type="string" name="itemName"/><br/>
+				<incleput type="submit" value="SEARCH"/>
+			</form>
+		</div>
+
+		<span style="font-size: 25pt" th:text="'[' + ${data.itemName} + ']'">[Plaguebloom]</span>
+
+		<table>
+			<tr>
+				<th>Current Price</th>
+				<td>
+					<span th:text="${data.price} + 'g'"/>
+				</td>
+			</tr>
+			<tr>
+				<th>--</th>
+				<td>--</td>
+			</tr>
+			<tr>
+				<th># Available</th>
+				<td>
+					<span th:text="${data.quantity}"/>
+				</td>
+			</tr>
+		</table>
+
+		<h2>Past Week</h2>
+		<div id="weekly"
+			 style="min-width: 210px; height: 400px; margin: 0 auto"></div>
+		<script th:inline="javascript">
+			// Utility Functions
+			function formatGold(raw) {
+				var gold = raw*.0001;
+				return gold.toFixed(2) + ' g';
+			}
+			function priceToolTip(point) {
+				return point.series.name + ': ' + formatGold(point.y);
+			}
+			function quantityTooltip(point) {
+				return point.series.name + ': ' + point.y;
+			}
+			function getToolTips(point) {
+				if (point.series.name == 'Price') {
+					return priceToolTip(point);
+				} else if (point.series.name == 'Quantity') {
+					return quantityTooltip(point);
+				}
+				return 'data mismatch';
+			}
+
+			Highcharts.chart('weekly', {
+
+				title : {
+					text : ''
+				},
+
+				xAxis : {
+					type: 'datetime',
+				},
+				yAxis: [{
+					min: 0,
+					title: {
+						text: ''
+					},
+					labels: {
+						formatter: function() {
+							return formatGold(this.value);
+						}
+					}
+				}, {
+					min: 0,
+					labels: {
+						format: '{value}'
+					},
+					title: {
+						text: 'Quantity'
+					},
+					opposite: true
+				}],
+
+				plotOptions: {
+					area: {
+						marker: {
+							radius: 2
+						},
+						lineWidth: 1,
+						states: {
+							hover: {
+								lineWidth: 1
+							}
+						},
+						threshold: null
+					}
+				},
+
+				tooltip: {
+					split: true
+				},
+
+				tooltip: {
+					formatter: function () {
+						return [''].concat(
+								this.points ?
+										this.points.map(function (point) {
+											return getToolTips(point);
+										}) : []
+						);
+					},
+					split: true
+				},
+
+				series : [ {
+					type: 'area',
+					color: '#668466',
+					name: 'Price',
+					data: [[${data.weeklyPrice}]]
+
+				},
+					{
+						type: 'line',
+						color: '#293929',
+						name: 'Quantity',
+						data: [[${data.weeklyQuantity}]],
+						yAxis: 1
+
+					}]
+			});
+		</script>
+
+
+		<h2>Past Month</h2>
+		<div id="monthly"
+			 style="min-width: 210px; height: 400px; margin: 0 auto"></div>
+		<script th:inline="javascript">
+			Highcharts.chart('monthly', {
+
+				title : {
+					text : ''
+				},
+
+				xAxis : {
+					type: 'datetime',
+				},
+				yAxis: [{
+					min: 0,
+					title: {
+						text: ''
+					},
+					labels: {
+						formatter: function() {
+							return formatGold(this.value);
+						}
+					}
+				}, {
+					min: 0,
+					labels: {
+						format: '{value}'
+					},
+					title: {
+						text: 'Quantity'
+					},
+					opposite: true
+				}],
+
+				plotOptions: {
+					area: {
+						marker: {
+							radius: 2
+						},
+						lineWidth: 1,
+						states: {
+							hover: {
+								lineWidth: 1
+							}
+						},
+						threshold: null
+					}
+				},
+
+				tooltip: {
+					split: true
+				},
+
+				tooltip: {
+					formatter: function () {
+						return [''].concat(
+								this.points ?
+										this.points.map(function (point) {
+											return getToolTips(point);
+										}) : []
+						);
+					},
+					split: true
+				},
+
+				series : [ {
+					type: 'area',
+					color: '#668466',
+					name: 'Price',
+					data: [[${data.monthlyPrice}]],
+
+				},
+					{
+						type: 'line',
+						color: '#293929',
+						name: 'Quantity',
+						data: [[${data.monthlyQuantity}]],
+						yAxis: 1
+
+					}]
+			});
+		</script>
+
+		<h2>Current Top Sellers</h2>
+		<div id="currentSellers"
+			 style="min-width: 210px; height: 400px; margin: 0 auto"></div>
+		<script th:inline="javascript">
+			Highcharts.chart('currentSellers', {
+				chart: {
+					type: 'column'
+				},
+				title: {
+					text: ''
+				},
+				xAxis: {
+					categories: [[${data.weeklySellers.keySet()}]],
+					crosshair: true
+				},
+				yAxis: {
+					title: {
+						text: ''
+					}
+				},
+				tooltip: {
+					shared: true,
+					useHTML: true
+				},
+				plotOptions: {
+					column: {
+						pointPadding: 0.2,
+						borderWidth: 0
+					}
+				},
+				series: [{
+					name: 'Listed',
+					color: '#668466',
+					data: [[${data.weeklySellers.values()}]]
+
+				}]
+			});
+		</script>
+
+		<h2>All-Time Top Sellers</h2>
+		<div id="allTimeSellers"
+			 style="min-width: 210px; height: 400px; margin: 0 auto"></div>
+		<script th:inline="javascript">
+			Highcharts.chart('allTimeSellers', {
+				chart: {
+					type: 'column'
+				},
+				title: {
+					text: ''
+				},
+				xAxis: {
+					categories: [[${data.monthlySellers.keySet()}]],
+					crosshair: true
+				},
+				yAxis: {
+					min: 0,
+					title: {
+						text: ''
+					}
+				},
+				tooltip: {
+					shared: true,
+					useHTML: true
+				},
+				plotOptions: {
+					column: {
+						pointPadding: 0.2,
+						borderWidth: 0
+					}
+				},
+				series: [{
+					name: 'Listed',
+					color: '#668466',
+					data: [[${data.monthlySellers.values()}]]
+
+				}]
+			});
+		</script>
+	</div>
+</body>
+</html>
