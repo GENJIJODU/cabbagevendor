@@ -100,12 +100,11 @@ public class ListingSqlImpl implements ListingsDb {
     @Override
     public ItemPageData getItemPageData(String name) {
         ItemPageData itemPageData = new ItemPageData();
-        Long lastTs = getLatestTimeStamp(name);
         List<Listing> weeklyListings = getListingsForInterval(name, 604800000l);
         List<Listing> monthlyListings = getListingsForInterval(name, 2419200000l);
         Long[][] weeklyQuantity = HCUtil.listToQuantityArray(weeklyListings);
         itemPageData.setItemName(name);
-        itemPageData.setPrice(getPrice(name, lastTs));
+        itemPageData.setPrice(getLatestPrice(name));
         itemPageData.setQuantity(weeklyQuantity[weeklyQuantity.length-1][1].intValue());
         itemPageData.setWeeklyPrice(HCUtil.listToPriceArray(weeklyListings));
         itemPageData.setWeeklyQuantity(HCUtil.listToQuantityArray(weeklyListings));
@@ -114,6 +113,11 @@ public class ListingSqlImpl implements ListingsDb {
         itemPageData.setWeeklySellers(getLatestSellers(name));
         itemPageData.setMonthlySellers(getLatestSellers(name));
         return itemPageData;
+    }
+
+    @Override
+    public Double getLatestPrice(String name) {
+        return getPriceForTimestamp(name, getLatestTimeStamp(name));
     }
 
     private Map<String, Integer> getLatestSellers(String name) {
@@ -146,7 +150,7 @@ public class ListingSqlImpl implements ListingsDb {
         );
     }
 
-    private Double getPrice(String name, Long lastTs) {
+    private Double getPriceForTimestamp(String name, Long lastTs) {
         Integer unitBuyout = jdbcTemplate.queryForObject("SELECT MIN(unitBuyout) " +
                         "FROM listings " +
                         "WHERE date = ? AND " +
@@ -180,8 +184,6 @@ public class ListingSqlImpl implements ListingsDb {
 
 
     private class ListingRowMapper implements RowMapper<Listing> {
-
-
         @Override
         public Listing mapRow(ResultSet rs, int rowNum) throws SQLException {
             return new Listing(

@@ -10,6 +10,13 @@
 		margin-left: auto;
 		margin-right: auto;
 	}
+	.sidebar {
+		position: relative;
+		float: right;
+		width: 14em;
+		line-height: 1.4em;
+		right: -2em;
+	}
 </style>
 <!-- Latest compild and minified CSS -->
 <link rel="stylesheet"
@@ -24,14 +31,30 @@
 		THE CABBAGE REPORT.
 	</h1>
 	<div class="container">
-
-
+		
+		<div class="sidebar">
 			<form action="#" th:action="@{/itemPage}"   method="post">
-				Item: <input type="string" name="itemName"/><br/>
-				<incleput type="submit" value="SEARCH"/>
+				Item Name: <input type="string" name="itemName"/><br/>
+				<input type="submit" value="SEARCH"/>
 			</form>
+			<br/>
+			<h4>Professions</h4>
+			<h5>Gear</h5>
+			<a href="profession/Blacksmithing">Blacksmithing</a><br/>
+			<a href="profession/Leatherworking">Leatherworking</a><br/>
+			<a href="profession/Tailoring">Tailoring</a><br/>
+			<br/>
+			<h5>Consumables</h5>
+			<a href="profession/Alechemy">Alechemy</a><br/>
+			<a href="profession/Cooking">Cooking</a><br/>
+			<a href="profession/Engineering">Engineering</a><br/>
+			<br/>
+			<h5>Gathering</h5>
+			<a href="profession/Herbalism">Herbalism</a><br/>
+			<a href="profession/Mining">Mining</a><br/>
+			<a href="profession/Skinning">Skinning</a><br/>
+		</div>
 
-		<p>That Paper Trail</p>
 	</div>
 </body>
 </html>
