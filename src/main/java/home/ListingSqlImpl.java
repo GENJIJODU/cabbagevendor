@@ -69,7 +69,7 @@ public class ListingSqlImpl implements ListingsDb {
     @Override
     public void addDataFromJson(JSONObject jsonData) {
         List<Object[]> jsonListings = new LinkedList<>();
-        for (Listing listing : JsonToPojosUtil.jsonToListing((JSONObject) jsonData.get("AuctionDBSaved"))) {
+        for (Listing listing : JsonToPojosUtil.jsonToListing(jsonData)) {
             jsonListings.add(new Object[]{
                     listing.getItemName(),
                     listing.getUserName(),
@@ -103,14 +103,14 @@ public class ListingSqlImpl implements ListingsDb {
         Long lastTs = getLatestTimeStamp(name);
         List<Listing> weeklyListings = getListingsForInterval(name, 604800000l);
         List<Listing> monthlyListings = getListingsForInterval(name, 2419200000l);
-        Long[][] weeklyQuantity = getQuantityArray(weeklyListings);
+        Long[][] weeklyQuantity = HCUtil.listToQuantityArray(weeklyListings);
         itemPageData.setItemName(name);
         itemPageData.setPrice(getPrice(name, lastTs));
         itemPageData.setQuantity(weeklyQuantity[weeklyQuantity.length-1][1].intValue());
-        itemPageData.setWeeklyPrice(getPriceArray(weeklyListings));
-        itemPageData.setWeeklyQuantity(getQuantityArray(weeklyListings));
-        itemPageData.setMonthlyPrice(getPriceArray(monthlyListings));
-        itemPageData.setMonthlyQuantity(getQuantityArray(monthlyListings));
+        itemPageData.setWeeklyPrice(HCUtil.listToPriceArray(weeklyListings));
+        itemPageData.setWeeklyQuantity(HCUtil.listToQuantityArray(weeklyListings));
+        itemPageData.setMonthlyPrice(HCUtil.listToPriceArray(monthlyListings));
+        itemPageData.setMonthlyQuantity(HCUtil.listToQuantityArray(monthlyListings));
         itemPageData.setWeeklySellers(getLatestSellers(name));
         itemPageData.setMonthlySellers(getLatestSellers(name));
         return itemPageData;
@@ -118,14 +118,7 @@ public class ListingSqlImpl implements ListingsDb {
 
     private Map<String, Integer> getLatestSellers(String name) {
         Long lastTs = getLatestTimeStamp(name);
-        List<Listing> listings = jdbcTemplate.query(
-                "SELECT * FROM listings " +
-                        "WHERE " +
-                        "itemName = ? AND " +
-                        "date = ?",
-                new Object[]{name, lastTs},
-                new ListingRowMapper()
-        );
+        List<Listing> listings = getListingsForTimeStamp(name, lastTs);
         Map<String, Integer> sellers = new HashMap<>();
         for (Listing listing : listings) {
             String user = listing.getUserName();
@@ -138,9 +131,19 @@ public class ListingSqlImpl implements ListingsDb {
             }
         }
 
-        return sortByValue(sellers);
+        return HCUtil.sortByValue(sellers);
 
+    }
 
+    private List<Listing> getListingsForTimeStamp(String name, Long lastTs) {
+        return jdbcTemplate.query(
+                "SELECT * FROM listings " +
+                        "WHERE " +
+                        "itemName = ? AND " +
+                        "date = ?",
+                new Object[]{name, lastTs},
+                new ListingRowMapper()
+        );
     }
 
     private Double getPrice(String name, Long lastTs) {
@@ -175,50 +178,6 @@ public class ListingSqlImpl implements ListingsDb {
         );
     }
 
-    private Long[][] getPriceArray(List<Listing> listings) {
-        Map<Long, Integer> result = new HashMap<>();
-        for (Listing listing : listings) {
-            if (result.get(listing.getDate())==null) {
-                result.put(listing.getDate(), listing.getUnitBuyout());
-            } else if (listing.getUnitBuyout() < result.get(listing.getDate())) {
-                result.put(listing.getDate(), listing.getUnitBuyout());
-            }
-        }
-
-        return mapToArray(result);
-    }
-
-    private Long[][] getQuantityArray(List<Listing> listings) {
-        Map<Long, Integer> result = new HashMap<>();
-        for (Listing listing : listings) {
-            Integer currentTotal = result.get(listing.getDate());
-            Integer itemsInListing = listing.getNumPerStack()* listing.getNumStacks();
-            if (currentTotal==null) {
-                result.put(listing.getDate(), itemsInListing);
-            } else {
-                Integer newTotal = currentTotal + (itemsInListing);
-                result.put(listing.getDate(), newTotal);
-            }
-        }
-
-        return mapToArray(result);
-    }
-
-    //turns a map into an array of longs, sorted by key.
-
-    private Long[][] mapToArray(Map<Long, Integer> result) {
-        Long[][] outArray = new Long[result.keySet().size()][2];
-        int count = 0;
-        List<Long> list = new ArrayList<>(result.keySet());
-        Collections.sort(list);
-        for (Long ts : list) {
-            outArray[count][0] = ts;
-            outArray[count][1] = Long.valueOf(result.get(ts));
-            count++;
-        }
-        return outArray;
-    }
-
 
     private class ListingRowMapper implements RowMapper<Listing> {
 
@@ -236,18 +195,5 @@ public class ListingSqlImpl implements ListingsDb {
                     rs.getLong("date")
             );
         }
-    }
-
-    public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(Map<K, V> map) {
-        List<Map.Entry<K, V>> list = new ArrayList<>(map.entrySet());
-        list.sort(Map.Entry.comparingByValue());
-
-        Map<K, V> result = new LinkedHashMap<>();
-        for (Map.Entry<K, V> entry : list) {
-            result.put(entry.getKey(), entry.getValue());
-        }
-
-        System.out.println(result);
-        return result;
     }
 }

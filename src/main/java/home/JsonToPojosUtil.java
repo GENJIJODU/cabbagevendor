@@ -9,7 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 public class JsonToPojosUtil {
-    public static List<Listing> jsonToListing(JSONObject jsonObject) {
+    public static List<Listing> jsonToListing(JSONObject jsonData) {
+        JSONObject jsonObject = (JSONObject) jsonData.get("AuctionDBSaved");
         List<Listing> convertedListings = new LinkedList<>();
 
 
