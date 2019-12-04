@@ -20,4 +20,15 @@ public class MainController {
         model.addAttribute("data", listingsDb.getItemPageData(itemName));
         return "pageData";
     }
+
+    @RequestMapping("/home")
+    public String getHomePage() {
+        return "homePage";
+    }
+
+    @PostMapping(value="/itemPage")
+    public String getItemPage(@RequestBody String itemName, Model model) {
+        System.out.println("POST RECEIVED:" + itemName);
+        return generateItemPage(itemName.split("=")[1], model);
+    }
 }
