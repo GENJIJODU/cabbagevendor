@@ -111,9 +111,36 @@ public class ListingSqlImpl implements ListingsDb {
         itemPageData.setWeeklyQuantity(getQuantityArray(weeklyListings));
         itemPageData.setMonthlyPrice(getPriceArray(monthlyListings));
         itemPageData.setMonthlyQuantity(getQuantityArray(monthlyListings));
-        itemPageData.setWeeklySellers(null);
-        itemPageData.setMonthlySellers(null);
+        itemPageData.setWeeklySellers(getLatestSellers(name));
+        itemPageData.setMonthlySellers(getLatestSellers(name));
         return itemPageData;
+    }
+
+    private Map<String, Integer> getLatestSellers(String name) {
+        Long lastTs = getLatestTimeStamp(name);
+        List<Listing> listings = jdbcTemplate.query(
+                "SELECT * FROM listings " +
+                        "WHERE " +
+                        "itemName = ? AND " +
+                        "date = ?",
+                new Object[]{name, lastTs},
+                new ListingRowMapper()
+        );
+        Map<String, Integer> sellers = new HashMap<>();
+        for (Listing listing : listings) {
+            String user = listing.getUserName();
+            Integer quantity = listing.getNumStacks() * listing.getNumPerStack();
+            if (sellers.get(user) == null) {
+                sellers.put(user, quantity);
+            } else {
+                Integer newQuantity = sellers.get(user) + quantity;
+                sellers.put(user, newQuantity);
+            }
+        }
+
+        return sortByValue(sellers);
+
+
     }
 
     private Double getPrice(String name, Long lastTs) {
@@ -178,6 +205,7 @@ public class ListingSqlImpl implements ListingsDb {
     }
 
     //turns a map into an array of longs, sorted by key.
+
     private Long[][] mapToArray(Map<Long, Integer> result) {
         Long[][] outArray = new Long[result.keySet().size()][2];
         int count = 0;
@@ -194,6 +222,7 @@ public class ListingSqlImpl implements ListingsDb {
 
     private class ListingRowMapper implements RowMapper<Listing> {
 
+
         @Override
         public Listing mapRow(ResultSet rs, int rowNum) throws SQLException {
             return new Listing(
@@ -207,5 +236,18 @@ public class ListingSqlImpl implements ListingsDb {
                     rs.getLong("date")
             );
         }
+    }
+
+    public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(Map<K, V> map) {
+        List<Map.Entry<K, V>> list = new ArrayList<>(map.entrySet());
+        list.sort(Map.Entry.comparingByValue());
+
+        Map<K, V> result = new LinkedHashMap<>();
+        for (Map.Entry<K, V> entry : list) {
+            result.put(entry.getKey(), entry.getValue());
+        }
+
+        System.out.println(result);
+        return result;
     }
 }
