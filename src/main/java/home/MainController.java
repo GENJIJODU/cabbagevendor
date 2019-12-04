@@ -27,8 +27,7 @@ public class MainController {
     }
 
     @PostMapping(value="/itemPage")
-    public String getItemPage(@RequestBody String itemName, Model model) {
-        System.out.println("POST RECEIVED:" + itemName);
-        return generateItemPage(itemName.split("=")[1], model);
+    public String getItemPage(@RequestParam("itemName") String itemName, Model model) {
+        return generateItemPage(itemName, model);
     }
 }
