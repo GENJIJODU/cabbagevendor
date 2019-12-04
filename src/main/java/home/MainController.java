@@ -23,8 +23,8 @@ public class MainController {
 
     @RequestMapping("/profession/{profession}")
     public String generateProfessionPage(@PathVariable String profession, Model model) {
-        model.addAttribute("data", listingsDb.getItemPageData("Dreamfoil"));
-        return "pageData";
+        model.addAttribute("profession", profession);
+        return "professionPage";
     }
 
     @RequestMapping("/home")
