@@ -24,6 +24,7 @@ public class MainController {
     @RequestMapping("/profession/{profession}")
     public String generateProfessionPage(@PathVariable String profession, Model model) {
         model.addAttribute("profession", profession);
+        model.addAttribute("profitEntries", listingsDb.getProfitEntries(Profession.valueOf(profession)));
         return "professionPage";
     }
 

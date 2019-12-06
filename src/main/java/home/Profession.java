@@ -1,13 +1,23 @@
 package home;
 
 public enum Profession {
-    Blacksmithing,
-    Leatherworking,
-    Tailoring,
-    Alechemy,
-    Cooking,
-    Engineering,
-    Herbalism,
-    Mining,
-    Skinning
+    Blacksmithing("Blacksmithing"),
+    Leatherworking("Leatherworking"),
+    Tailoring("Tailoring"),
+    Alchemy("Alchemy"),
+    Cooking("Cooking"),
+    Engineering("Engineering"),
+    Herbalism("Herbalism"),
+    Mining("Mining"),
+    Skinning("Skinning");
+
+    private String value;
+
+    Profession(String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return value;
+    }
 }

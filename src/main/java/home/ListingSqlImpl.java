@@ -8,6 +8,8 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.io.FileReader;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -22,10 +24,13 @@ public class ListingSqlImpl implements ListingsDb {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
+    List<Recipe> recipes = new LinkedList<>();
+
     public ListingSqlImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
         createSchema();
         loadDataFromFiles();
+        recipes = CraftingRecipes.getAll();
     }
 
     private void createSchema() {
@@ -95,6 +100,42 @@ public class ListingSqlImpl implements ListingsDb {
                 jsonListings
         );
 
+    }
+
+    @Override
+    public List<ProfitEntry> getProfitEntries(Profession profession) {
+        List<ProfitEntry> entries = new LinkedList<>();
+
+        for (Recipe recipe : recipes) {
+            entries.add(getProfitEntry(recipe));
+        }
+
+        return entries;
+    }
+
+    public ProfitEntry getProfitEntry(Recipe recipe) {
+        Double rawProfit = getTotalPrice(recipe.getProducts());
+        Double costToCraft = getTotalPrice(recipe.getComponents());
+        Double ahCut = round(rawProfit * .05, 4);
+        Double totalProfit = round(rawProfit - costToCraft - ahCut, 4);
+
+        ProfitEntry profitEntry = new ProfitEntry();
+        profitEntry.setName(recipe.getName());
+        profitEntry.setComponents(recipe.getComponents());
+        profitEntry.setSalePrice(rawProfit);
+        profitEntry.setCraftingPrice(costToCraft);
+        profitEntry.setAhCut(ahCut);
+        profitEntry.setTotalprofit(totalProfit);
+
+        return profitEntry;
+    }
+
+    private Double getTotalPrice(Map<String, Integer> components) {
+        Double total = new Double(0);
+        for (Map.Entry<String, Integer> entry : components.entrySet()) {
+            total += (getLatestPrice(entry.getKey()) * entry.getValue());
+        }
+        return total;
     }
 
     @Override
@@ -180,6 +221,14 @@ public class ListingSqlImpl implements ListingsDb {
                 new Object[]{name, startingTs},
                 new ListingRowMapper()
         );
+    }
+
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = BigDecimal.valueOf(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
     }
 
 
