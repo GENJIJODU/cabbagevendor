@@ -43,53 +43,26 @@
             <th>AH Cut</th>
             <th>Total Profit</th>
         </tr>
-        <tr>
-            <td>
-                Greater Arcane Elixir
-            </td>
-            <td>
-                <table>
-                    <tr><td>3x Dreamfoil</td></tr>
-                    <tr><td>1x Mountain Silversage</td></tr>
-                    <tr><td>1x Crystal Vial</td></tr>
-                </table>
-            </td>
-            <td>
-                1.88g
-            </td>
-            <td>
-                3.50g
-            </td>
-            <td>
-                .175g
-            </td>
-            <td>
-                1.445g
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Elixir of Greater Shadow Power
-            </td>
-            <td>
-                <table>
-                    <tr><td>3x Ghost Mushroom</td></tr>
-                    <tr><td>1x Crystal Vial</td></tr>
-                </table>
-            </td>
-            <td>
-                1.95g
-            </td>
-            <td>
-                2.00g
-            </td>
-            <td>
-                .1g
-            </td>
-            <td>
-                -.05g
-            </td>
-        </tr>
+        <th:block th:each="entry :${profitEntries}">
+            <tr>
+                <td th:text="'[' + ${entry.name} + ']'"/>
+                <td>
+                    <table>
+                        <th:block th:each="item :${entry.components}">
+                            <tr>
+                                <td>
+                                    <a th:text="${item.value} + 'x ' + ${item.key}" th:href="@{'/itemPage/' + ${item.key}}"/>
+                                </td>
+                            </tr>
+                        </th:block>
+                    </table>
+                </td>
+                <td th:text="${entry.craftingPrice} + 'g'"/>
+                <td th:text="${entry.salePrice} + 'g'"/>
+                <td th:text="${entry.ahCut} + 'g'"/>
+                <td th:text="${entry.totalprofit} + 'g'"/>
+            </tr>
+        </th:block>
     </table>
 
     <div class="sidebar">

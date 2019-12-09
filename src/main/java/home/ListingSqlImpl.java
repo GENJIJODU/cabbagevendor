@@ -48,33 +48,13 @@ public class ListingSqlImpl implements ListingsDb {
     }
 
     private void loadDataFromFiles() {
-        JSONObject jsonObject;
-        JSONParser jsonParser = new JSONParser();
-
-        List<Path> files = new LinkedList<>();
-
-        try {
-            files = Files.list(Paths.get("data")).map(Path::getFileName).collect(Collectors.toList());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        for (Path path : files) {
-            try {
-                FileReader reader = new FileReader("data/" + path.toString());
-                jsonObject = (JSONObject) jsonParser.parse(reader);
-                reader.close();
-            } catch (Exception e) {
-                jsonObject = new JSONObject();
-                e.printStackTrace();
-            }
-            addDataFromJson(jsonObject);
-        }
+        addListings(JsonToPojosUtil.loadFromAHDB());
     }
 
     @Override
-    public void addDataFromJson(JSONObject jsonData) {
+    public int[] addListings(List<Listing> listings) {
         List<Object[]> jsonListings = new LinkedList<>();
-        for (Listing listing : JsonToPojosUtil.jsonToListing(jsonData)) {
+        for (Listing listing : listings) {
             jsonListings.add(new Object[]{
                     listing.getItemName(),
                     listing.getUserName(),
@@ -86,7 +66,7 @@ public class ListingSqlImpl implements ListingsDb {
                     listing.getDate()
             });
         }
-        jdbcTemplate.batchUpdate(
+        return jdbcTemplate.batchUpdate(
                 "INSERT INTO listings(" +
                         "itemName," +
                         "userName," +
@@ -99,6 +79,11 @@ public class ListingSqlImpl implements ListingsDb {
                         "VALUES (?,?,?,?,?,?,?,?)",
                 jsonListings
         );
+    }
+
+    @Override
+    public void addDataFromJson(JSONObject jsonData) {
+        addListings(JsonToPojosUtil.jsonToListing(jsonData));
 
     }
 
