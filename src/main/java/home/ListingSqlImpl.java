@@ -1,22 +1,15 @@
 package home;
 
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import java.io.FileReader;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Repository
 public class ListingSqlImpl implements ListingsDb {
@@ -24,9 +17,9 @@ public class ListingSqlImpl implements ListingsDb {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
-    List<Recipe> recipes = new LinkedList<>();
+    List<Recipe> recipes;
 
-    public ListingSqlImpl(JdbcTemplate jdbcTemplate) {
+    public ListingSqlImpl(JdbcTemplate jdbcTemplate) throws SQLException {
         this.jdbcTemplate = jdbcTemplate;
         createSchema();
         loadDataFromFiles();
@@ -48,7 +41,13 @@ public class ListingSqlImpl implements ListingsDb {
     }
 
     private void loadDataFromFiles() {
-        addListings(JsonToPojosUtil.loadFromAHDB());
+        int current = 1;
+        Map<Long, List<Listing>> listings = JsonToPojosUtil.loadFromAHDB();
+        for (Map.Entry<Long, List<Listing>> entry : listings.entrySet()) {
+            System.out.println("Uploading scan " + current + " of " + listings.entrySet().size());
+            addListings(entry.getValue());
+            current ++;
+        }
     }
 
     @Override
@@ -66,7 +65,16 @@ public class ListingSqlImpl implements ListingsDb {
                     listing.getDate()
             });
         }
-        return jdbcTemplate.batchUpdate(
+        int[] argTypes = new int[8];
+        argTypes[0] = Types.VARCHAR;
+        argTypes[1] = Types.VARCHAR;
+        argTypes[2] = Types.INTEGER;
+        argTypes[3] = Types.INTEGER;
+        argTypes[4] = Types.INTEGER;
+        argTypes[5] = Types.INTEGER;
+        argTypes[6] = Types.INTEGER;
+        argTypes[7] = Types.BIGINT;
+        int result[] = jdbcTemplate.batchUpdate(
                 "INSERT INTO listings(" +
                         "itemName," +
                         "userName," +
@@ -77,13 +85,15 @@ public class ListingSqlImpl implements ListingsDb {
                         "unitBuyout," +
                         "date) " +
                         "VALUES (?,?,?,?,?,?,?,?)",
-                jsonListings
+                jsonListings,
+                argTypes
         );
+
+        return result;
     }
 
     @Override
     public void addDataFromJson(JSONObject jsonData) {
-        addListings(JsonToPojosUtil.jsonToListing(jsonData));
 
     }
 
