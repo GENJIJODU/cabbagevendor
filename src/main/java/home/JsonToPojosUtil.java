@@ -22,7 +22,8 @@ public class JsonToPojosUtil {
         for (Path path : files) {
             jsonObject = getJsonFromPath(path);
             Map<String, String> itemIdToName = getItemIdToName(jsonObject);
-            for (JSONObject scan : getScans(jsonObject)) {
+//            for (JSONObject scan : getScans(jsonObject)) {
+            for (JSONObject scan : getLatestScan(jsonObject)) {
                 long ts = getTimeStamp(scan);
                 if (result.get(ts) == null) {
                     result.put(ts, scanToListings(scan, itemIdToName));
@@ -60,21 +61,18 @@ public class JsonToPojosUtil {
 
     private static List<Listing> scanToListings(JSONObject scan, Map<String, String> itemIdToName) {
         List<Listing> convertedListings = new LinkedList<>();
-        String auctions = (String) scan.get("data");
+        String encodedAuctions = (String) scan.get("data");
         Long timestamp = ((Long) scan.get("ts") * 1000);
-        for (String item : auctions.split(", ")) {
+        for (String item : encodedAuctions.split(", ")) {
             String[] details = item.split("!");
             String itemName = itemIdToName.get(details[0]);
 
             for (Integer i=1; i<details.length; i++) {
-                String[] userListings = details[i].split("!");
-
-                for (Integer g=0; g<userListings.length; g++) {
-                    String username = userListings[g].split("/")[0];
-
-                    String[] pricingInfo = userListings[g].split("/")[1].split(",");
+                String userListings = details[i];
+                String username = userListings.split("/")[0];
+                for (String listing : userListings.split("/")[1].split("&")) {
+                    String[] pricingInfo = listing.split(",");
                     if (pricingInfo.length == 4) {
-                        int numStacks = Integer.parseInt(pricingInfo[0]);
                         int stackSize = Integer.parseInt(pricingInfo[1]);
                         int bidPrice = Integer.parseInt(pricingInfo[3]);
                         int buyoutPrice = bidPrice;
