@@ -22,8 +22,8 @@ public class JsonToPojosUtil {
         for (Path path : files) {
             jsonObject = getJsonFromPath(path);
             Map<String, String> itemIdToName = getItemIdToName(jsonObject);
-//            for (JSONObject scan : getScans(jsonObject)) {
-            for (JSONObject scan : getLatestScan(jsonObject)) {
+            for (JSONObject scan : getScans(jsonObject)) {
+//            for (JSONObject scan : getLatestScan(jsonObject)) {
                 long ts = getTimeStamp(scan);
                 if (result.get(ts) == null) {
                     result.put(ts, scanToListings(scan, itemIdToName));
@@ -63,7 +63,7 @@ public class JsonToPojosUtil {
         List<Listing> convertedListings = new LinkedList<>();
         String encodedAuctions = (String) scan.get("data");
         Long timestamp = ((Long) scan.get("ts") * 1000);
-        for (String item : encodedAuctions.split(", ")) {
+        for (String item : encodedAuctions.split(" ")) {
             String[] details = item.split("!");
             String itemName = itemIdToName.get(details[0]);
 
@@ -72,10 +72,10 @@ public class JsonToPojosUtil {
                 String username = userListings.split("/")[0];
                 for (String listing : userListings.split("/")[1].split("&")) {
                     String[] pricingInfo = listing.split(",");
-                    if (pricingInfo.length == 4) {
+                    if (pricingInfo.length != 3 && !pricingInfo[3].equals("")) {
                         int stackSize = Integer.parseInt(pricingInfo[1]);
-                        int bidPrice = Integer.parseInt(pricingInfo[3]);
-                        int buyoutPrice = bidPrice;
+                        int bidPrice = Integer.parseInt(pricingInfo[2]);
+                        int buyoutPrice = Integer.parseInt(pricingInfo[3]);
                         int unitPrice = buyoutPrice/stackSize;
                         convertedListings.add(new Listing(itemName, username, 1, stackSize, bidPrice, buyoutPrice, unitPrice, timestamp));
                     }
