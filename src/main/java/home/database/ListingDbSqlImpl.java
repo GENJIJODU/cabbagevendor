@@ -27,8 +27,8 @@ public class ListingDbSqlImpl implements ListingsDb {
 
     public ListingDbSqlImpl(JdbcTemplate jdbcTemplate) throws SQLException {
         this.jdbcTemplate = jdbcTemplate;
-        createSchema();
-        loadDataFromFiles();
+//        createSchema();
+//        loadDataFromFiles();
         recipes = CraftingRecipes.getAll();
     }
 
@@ -109,6 +109,7 @@ public class ListingDbSqlImpl implements ListingsDb {
 
     @Override
     public List<ProfitEntry> getProfitEntries(Profession profession) {
+        jdbcTemplate.execute("USE cabbagereport");
         List<ProfitEntry> entries = new LinkedList<>();
 
         for (Recipe recipe : recipes) {
