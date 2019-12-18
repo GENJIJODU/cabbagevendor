@@ -9,6 +9,7 @@ import home.view.ItemPageData;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
@@ -103,6 +104,17 @@ public class ListingDbSqlImpl implements ListingsDb {
     }
 
     @Override
+    public String[] getItemNames() {
+
+        List<String> names = jdbcTemplate.query(
+                "SELECT DISTINCT itemName FROM listings",
+                (rs, rowNum) -> rs.getString("itemName")
+        );
+
+        return Arrays.copyOf(names.toArray(), names.size(), String[].class);
+    }
+
+    @Override
     public void addDataFromJson(JSONObject jsonData) {
 
     }
@@ -160,6 +172,7 @@ public class ListingDbSqlImpl implements ListingsDb {
         itemPageData.setMonthlyQuantity(HCUtil.listToQuantityArray(monthlyListings));
         itemPageData.setWeeklySellers(getLatestSellers(name));
         itemPageData.setMonthlySellers(getLatestSellers(name));
+        itemPageData.setItemNames(getItemNames());
         return itemPageData;
     }
 

@@ -13,11 +13,12 @@ public class ItemPageData {
     private Long[][] monthlyQuantity;
     Map<String, Integer> weeklySellers;
     Map<String, Integer> monthlySellers;
+    private String[] itemNames;
 
     public ItemPageData() {
     }
 
-    public ItemPageData(String itemName, Double price, Integer quantity, Long[][] weeklyPrice, Long[][] weeklyQuantity, Long[][] monthlyPrice, Long[][] monthlyQuantity, Map<String, Integer> weeklySellers, Map<String, Integer> monthlySellers) {
+    public ItemPageData(String itemName, Double price, Integer quantity, Long[][] weeklyPrice, Long[][] weeklyQuantity, Long[][] monthlyPrice, Long[][] monthlyQuantity, Map<String, Integer> weeklySellers, Map<String, Integer> monthlySellers, String[] itemNames) {
         this.itemName = itemName;
         this.price = price;
         this.quantity = quantity;
@@ -27,6 +28,7 @@ public class ItemPageData {
         this.monthlyQuantity = monthlyQuantity;
         this.weeklySellers = weeklySellers;
         this.monthlySellers = monthlySellers;
+        this.itemNames = itemNames;
     }
 
     public String getItemName() {
@@ -99,5 +101,13 @@ public class ItemPageData {
 
     public void setMonthlySellers(Map<String, Integer> monthlySellers) {
         this.monthlySellers = monthlySellers;
+    }
+
+    public String[] getItemNames() {
+        return itemNames;
+    }
+
+    public void setItemNames(String[] itemNames) {
+        this.itemNames = itemNames;
     }
 }

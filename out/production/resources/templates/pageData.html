@@ -31,8 +31,13 @@
 		<script src="https://code.highcharts.com/modules/exporting.js"></script>
 
 		<div align = "right">
-			<form action="/itemPage" method="post">
-				Item: <input type="string" name="itemName"/><br/>
+			<form autocomplete="off" action="/itemPage" method="post">
+				Item: <input list="itemNames" type="string" name="itemName" placeholder="Dreamfoil"/><br/>
+				<datalist id="itemNames">
+					<th:block th:each="name :${data.itemNames}">
+						<option th:value="${name}">
+					</th:block>
+				</datalist>
 				<incleput type="submit" value="SEARCH"/>
 			</form>
 		</div>
