@@ -1,4 +1,4 @@
-package home;
+package home.database;
 
 public class Listing {
     private String itemName;

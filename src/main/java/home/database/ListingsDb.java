@@ -1,5 +1,8 @@
-package home;
+package home.database;
 
+import home.view.ItemPageData;
+import home.crafting.Profession;
+import home.crafting.ProfitEntry;
 import org.json.simple.JSONObject;
 
 import java.util.List;

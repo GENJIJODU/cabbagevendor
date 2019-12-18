@@ -1,4 +1,6 @@
-package home;
+package home.view;
+
+import home.database.Listing;
 
 import java.util.*;
 

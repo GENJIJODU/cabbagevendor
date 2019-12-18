@@ -1,5 +1,11 @@
-package home;
+package home.database;
 
+import home.crafting.Profession;
+import home.crafting.ProfitEntry;
+import home.crafting.Recipe;
+import home.crafting.CraftingRecipes;
+import home.view.HCUtil;
+import home.view.ItemPageData;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -12,14 +18,14 @@ import java.sql.*;
 import java.util.*;
 
 @Repository
-public class ListingSqlImpl implements ListingsDb {
+public class ListingDbSqlImpl implements ListingsDb {
 
     @Autowired
     JdbcTemplate jdbcTemplate;
 
     List<Recipe> recipes;
 
-    public ListingSqlImpl(JdbcTemplate jdbcTemplate) throws SQLException {
+    public ListingDbSqlImpl(JdbcTemplate jdbcTemplate) throws SQLException {
         this.jdbcTemplate = jdbcTemplate;
         createSchema();
         loadDataFromFiles();

@@ -1,4 +1,4 @@
-package home;
+package home.crafting;
 
 import java.util.Map;
 

@@ -1,4 +1,4 @@
-package home;
+package home.crafting;
 
 public enum Profession {
     Blacksmithing("Blacksmithing"),

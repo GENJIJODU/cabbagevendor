@@ -1,5 +1,7 @@
-package home;
+package home.database;
 
+import home.crafting.CraftingRecipes;
+import home.crafting.Recipe;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
