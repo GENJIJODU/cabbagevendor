@@ -60,7 +60,6 @@ public class JsonToPojosUtil {
         return files;
     }
 
-
     private static List<Listing> scanToListings(JSONObject scan, Map<String, String> itemIdToName) {
         List<Listing> convertedListings = new LinkedList<>();
         String encodedAuctions = (String) scan.get("data");

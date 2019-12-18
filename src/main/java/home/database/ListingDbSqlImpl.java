@@ -33,7 +33,8 @@ public class ListingDbSqlImpl implements ListingsDb {
     }
 
     private void createSchema() {
-        jdbcTemplate.execute("DROP TABLE listings IF EXISTS");
+        jdbcTemplate.execute("USE cabbagereport");
+        jdbcTemplate.execute("DROP TABLE listings");
         jdbcTemplate.execute("CREATE TABLE listings " +
                 "(id SERIAL," +
                 "itemName VARCHAR(255), " +
@@ -59,6 +60,7 @@ public class ListingDbSqlImpl implements ListingsDb {
     @Override
     public int[] addListings(List<Listing> listings) {
         List<Object[]> jsonListings = new LinkedList<>();
+        System.out.println("Creating list...");
         for (Listing listing : listings) {
             jsonListings.add(new Object[]{
                     listing.getItemName(),
@@ -80,6 +82,7 @@ public class ListingDbSqlImpl implements ListingsDb {
         argTypes[5] = Types.INTEGER;
         argTypes[6] = Types.INTEGER;
         argTypes[7] = Types.BIGINT;
+        System.out.println("Calling batchupdate...");
         int result[] = jdbcTemplate.batchUpdate(
                 "INSERT INTO listings(" +
                         "itemName," +
@@ -94,6 +97,7 @@ public class ListingDbSqlImpl implements ListingsDb {
                 jsonListings,
                 argTypes
         );
+        System.out.println("Finished");
 
         return result;
     }
