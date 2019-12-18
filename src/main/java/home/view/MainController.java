@@ -26,12 +26,14 @@ public class MainController {
     @RequestMapping("/profession/{profession}")
     public String generateProfessionPage(@PathVariable String profession, Model model) {
         model.addAttribute("profession", profession);
+        model.addAttribute("itemNames", listingsDb.getItemNames());
         model.addAttribute("profitEntries", listingsDb.getProfitEntries(Profession.valueOf(profession)));
         return "professionPage";
     }
 
     @RequestMapping("/home")
-    public String getHomePage() {
+    public String getHomePage(Model model) {
+        model.addAttribute("itemNames", listingsDb.getItemNames());
         return "homePage";
     }
 

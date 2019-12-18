@@ -32,7 +32,7 @@
 
 		<div align = "right">
 			<form autocomplete="off" action="/itemPage" method="post">
-				Item: <input list="itemNames" type="string" name="itemName" placeholder="Dreamfoil"/><br/>
+				<input list="itemNames" type="string" name="itemName" placeholder="type item name to search ..."/><br/>
 				<datalist id="itemNames">
 					<th:block th:each="name :${data.itemNames}">
 						<option th:value="${name}">

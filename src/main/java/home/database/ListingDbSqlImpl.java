@@ -105,7 +105,7 @@ public class ListingDbSqlImpl implements ListingsDb {
 
     @Override
     public String[] getItemNames() {
-
+        jdbcTemplate.execute("USE cabbagereport");
         List<String> names = jdbcTemplate.query(
                 "SELECT DISTINCT itemName FROM listings",
                 (rs, rowNum) -> rs.getString("itemName")
