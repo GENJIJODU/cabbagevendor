@@ -146,6 +146,7 @@ public class ListingDbSqlImpl implements ListingsDb {
 
     @Override
     public ItemPageData getItemPageData(String name) {
+        jdbcTemplate.execute("USE cabbagereport");
         ItemPageData itemPageData = new ItemPageData();
         List<Listing> weeklyListings = getListingsForInterval(name, 604800000l);
         List<Listing> monthlyListings = getListingsForInterval(name, 2419200000l);
