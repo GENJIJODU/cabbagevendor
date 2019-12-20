@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -18,37 +19,54 @@ import java.util.Map;
 public class Dao {
 
     ListingsDb listingsDb;
+    Map<String, ItemPageData> itemCache = new HashMap<>();
+    Map<Profession, List<ProfitEntry>> professionCache = new HashMap<>();
+    String[] itemNamesCache;
 
     @Autowired
     public Dao(ListingsDb listingsDb) {
         this.listingsDb = listingsDb;
     }
-    public Object getItemPageData(String itemName) {
-        ItemPageData itemPageData = new ItemPageData();
-        itemPageData.setItemName(itemName);
-        itemPageData.setPrice(listingsDb.getCurrentPrice(itemName));
-        itemPageData.setQuantity(listingsDb.getLatestQuantity(itemName));
-        itemPageData.setWeeklyPrice(listingsDb.getPricesForInterval(itemName, System.currentTimeMillis() - 604800000l));
-        itemPageData.setWeeklyQuantity(listingsDb.getQuantitiesForInterval(itemName, System.currentTimeMillis() - 604800000l));
-        itemPageData.setMonthlyPrice(listingsDb.getPricesForInterval(itemName, System.currentTimeMillis() - 2419200000l));
-        itemPageData.setMonthlyQuantity(listingsDb.getQuantitiesForInterval(itemName, System.currentTimeMillis() - 2419200000l));
-        itemPageData.setWeeklySellers(listingsDb.getSellers(itemName));
-        itemPageData.setMonthlySellers(listingsDb.getSellers(itemName));
-        return itemPageData;
+    public ItemPageData getItemPageData(String itemName) {
+        if(!itemCache.containsKey(itemName)) {
+            ItemPageData itemPageData = new ItemPageData();
+            itemPageData.setItemName(itemName);
+            itemPageData.setPrice(listingsDb.getCurrentPrice(itemName));
+            itemPageData.setQuantity(listingsDb.getLatestQuantity(itemName));
+            itemPageData.setWeeklyPrice(listingsDb.getPricesForInterval(itemName, System.currentTimeMillis() - 604800000l));
+            itemPageData.setWeeklyQuantity(listingsDb.getQuantitiesForInterval(itemName, System.currentTimeMillis() - 604800000l));
+            itemPageData.setMonthlyPrice(listingsDb.getPricesForInterval(itemName, System.currentTimeMillis() - 2419200000l));
+            itemPageData.setMonthlyQuantity(listingsDb.getQuantitiesForInterval(itemName, System.currentTimeMillis() - 2419200000l));
+            itemPageData.setWeeklySellers(listingsDb.getSellers(itemName));
+            itemPageData.setMonthlySellers(listingsDb.getSellers(itemName));
+
+            itemCache.put(itemName, itemPageData);
+            return itemPageData;
+        } else {
+            return itemCache.get(itemName);
+        }
     }
 
-    public Object getItemNames() {
-        return listingsDb.getItemNames();
-    }
-
-    public Object getProfitEntries(Profession profession) {
-        List<ProfitEntry> entries = new LinkedList<>();
-
-        for (Recipe recipe : CraftingRecipes.getAll()) {
-            entries.add(getProfitEntry(recipe));
+    public String[] getItemNames() {
+        if (itemNamesCache == null) {
+            itemNamesCache = listingsDb.getItemNames();
         }
 
-        return entries;
+        return itemNamesCache;
+    }
+
+    public List<ProfitEntry> getProfitEntries(Profession profession) {
+        if (!professionCache.containsKey(profession)) {
+            List<ProfitEntry> entries = new LinkedList<>();
+            for (Recipe recipe : CraftingRecipes.getAll()) {
+                entries.add(getProfitEntry(recipe));
+            }
+
+            professionCache.put(profession, entries);
+            return entries;
+        } else {
+            return professionCache.get(profession);
+        }
     }
 
     public ProfitEntry getProfitEntry(Recipe recipe) {

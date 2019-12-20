@@ -195,6 +195,7 @@ public class ListingDbSqlImpl implements ListingsDb {
     }
 
     private Double getPriceForTimestamp(String name, Long lastTs) {
+        jdbcTemplate.execute("USE cabbagereport");
         return jdbcTemplate.queryForObject("SELECT MIN(unitBuyout) " +
                         "FROM listings " +
                         "WHERE date = ? AND " +
