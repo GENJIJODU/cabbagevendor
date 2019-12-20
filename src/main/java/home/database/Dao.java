@@ -18,6 +18,7 @@ import java.util.Map;
 @Service
 public class Dao {
 
+    Long latestScan = 0l;
     ListingsDb listingsDb;
     Map<String, ItemPageData> itemCache = new HashMap<>();
     Map<Profession, List<ProfitEntry>> professionCache = new HashMap<>();
@@ -28,7 +29,7 @@ public class Dao {
         this.listingsDb = listingsDb;
     }
     public ItemPageData getItemPageData(String itemName) {
-        if(!itemCache.containsKey(itemName)) {
+        if(!itemCache.containsKey(itemName) || databaseHasUpdated()) {
             ItemPageData itemPageData = new ItemPageData();
             itemPageData.setItemName(itemName);
             itemPageData.setPrice(listingsDb.getCurrentPrice(itemName));
@@ -41,30 +42,37 @@ public class Dao {
             itemPageData.setMonthlySellers(listingsDb.getSellers(itemName));
 
             itemCache.put(itemName, itemPageData);
+            updateLatestTimeStamp();
             return itemPageData;
         } else {
+            System.out.println("returning cached page data....");
             return itemCache.get(itemName);
         }
     }
 
     public String[] getItemNames() {
-        if (itemNamesCache == null) {
+        if (itemNamesCache == null || databaseHasUpdated()) {
             itemNamesCache = listingsDb.getItemNames();
+            updateLatestTimeStamp();
+        } else {
+            System.out.println("returning cached itemnames....");
         }
 
         return itemNamesCache;
     }
 
     public List<ProfitEntry> getProfitEntries(Profession profession) {
-        if (!professionCache.containsKey(profession)) {
+        if (!professionCache.containsKey(profession) || databaseHasUpdated()) {
             List<ProfitEntry> entries = new LinkedList<>();
             for (Recipe recipe : CraftingRecipes.getAll()) {
                 entries.add(getProfitEntry(recipe));
             }
 
             professionCache.put(profession, entries);
+            updateLatestTimeStamp();
             return entries;
         } else {
+            System.out.println("returning cached profession data....");
             return professionCache.get(profession);
         }
     }
@@ -100,5 +108,13 @@ public class Dao {
         BigDecimal bd = BigDecimal.valueOf(value);
         bd = bd.setScale(places, RoundingMode.HALF_UP);
         return bd.doubleValue();
+    }
+
+    private boolean databaseHasUpdated() {
+        return !latestScan.equals(listingsDb.getLatestTimeStamp());
+    }
+
+    private void updateLatestTimeStamp() {
+        latestScan = listingsDb.getLatestTimeStamp();
     }
 }

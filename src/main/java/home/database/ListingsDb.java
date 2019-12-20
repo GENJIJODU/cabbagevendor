@@ -21,4 +21,6 @@ public interface ListingsDb {
     Long[][] getQuantitiesForInterval(String itemName, long l);
 
     Map<String, Integer> getSellers(String itemName);
+
+    Long getLatestTimeStamp();
 }

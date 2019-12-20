@@ -194,6 +194,14 @@ public class ListingDbSqlImpl implements ListingsDb {
         return result;
     }
 
+    @Override
+    public Long getLatestTimeStamp() {
+        jdbcTemplate.execute("USE cabbagereport");
+        return jdbcTemplate.queryForObject("SELECT MAX(date) " +
+                        "FROM listings",
+                Long.class);
+    }
+
     private Double getPriceForTimestamp(String name, Long lastTs) {
         jdbcTemplate.execute("USE cabbagereport");
         return jdbcTemplate.queryForObject("SELECT MIN(unitBuyout) " +
