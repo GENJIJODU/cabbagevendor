@@ -1,7 +1,5 @@
 package home.database;
 
-import home.crafting.CraftingRecipes;
-import home.crafting.Recipe;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -63,7 +61,7 @@ public class JsonToPojosUtil {
     private static List<Listing> scanToListings(JSONObject scan, Map<String, String> itemIdToName) {
         List<Listing> convertedListings = new LinkedList<>();
         String encodedAuctions = (String) scan.get("data");
-        Long timestamp = ((Long) scan.get("ts") * 1000);
+        Long timestamp = getTimeStamp(scan);
         for (String item : encodedAuctions.split(" ")) {
             String[] details = item.split("!");
             String itemName = itemIdToName.get(details[0]);
@@ -92,7 +90,7 @@ public class JsonToPojosUtil {
     }
 
     private static long getTimeStamp(JSONObject scan) {
-        return (long) scan.get("ts");
+        return ((Long) scan.get("ts") * 1000);
     }
 
     private static List<JSONObject> getLatestScan(JSONObject jsonObject) {

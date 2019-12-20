@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import org.thymeleaf.util.MapUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -29,13 +30,15 @@ public class ListingDbSqlImpl implements ListingsDb {
     public ListingDbSqlImpl(JdbcTemplate jdbcTemplate) throws SQLException {
         this.jdbcTemplate = jdbcTemplate;
 //        createSchema();
-//        loadDataFromFiles();
+        loadDataFromFiles();
         recipes = CraftingRecipes.getAll();
     }
 
     private void createSchema() {
         jdbcTemplate.execute("USE cabbagereport");
+        System.out.println("Dropping table cabbagereport...");
         jdbcTemplate.execute("DROP TABLE listings");
+        System.out.println("Creating new table...");
         jdbcTemplate.execute("CREATE TABLE listings " +
                 "(id SERIAL," +
                 "itemName VARCHAR(255), " +
@@ -49,19 +52,25 @@ public class ListingDbSqlImpl implements ListingsDb {
     }
 
     private void loadDataFromFiles() {
+        jdbcTemplate.execute("USE cabbagereport");
         int current = 1;
         Map<Long, List<Listing>> listings = JsonToPojosUtil.loadFromAHDB();
+        List<Long> timeStamps = getTimestamps();
         for (Map.Entry<Long, List<Listing>> entry : listings.entrySet()) {
-            System.out.println("Uploading scan " + current + " of " + listings.entrySet().size());
-            addListings(entry.getValue());
+            if (!timeStamps.contains(entry.getKey())) {
+                System.out.println("Uploading scan " + current + " of " + listings.entrySet().size());
+                addListings(entry.getValue());
+            } else {
+                System.out.println("Skipping scan " + current + " of " + listings.entrySet().size());
+            }
             current ++;
+
         }
     }
 
     @Override
     public int[] addListings(List<Listing> listings) {
         List<Object[]> jsonListings = new LinkedList<>();
-        System.out.println("Creating list...");
         for (Listing listing : listings) {
             jsonListings.add(new Object[]{
                     listing.getItemName(),
@@ -83,7 +92,6 @@ public class ListingDbSqlImpl implements ListingsDb {
         argTypes[5] = Types.INTEGER;
         argTypes[6] = Types.INTEGER;
         argTypes[7] = Types.BIGINT;
-        System.out.println("Calling batchupdate...");
         int result[] = jdbcTemplate.batchUpdate(
                 "INSERT INTO listings(" +
                         "itemName," +
@@ -98,9 +106,16 @@ public class ListingDbSqlImpl implements ListingsDb {
                 jsonListings,
                 argTypes
         );
-        System.out.println("Finished");
 
         return result;
+    }
+
+    public List<Long> getTimestamps() {
+        jdbcTemplate.execute("USE cabbagereport");
+        return jdbcTemplate.query(
+                "SELECT DISTINCT date FROM listings",
+                (rs, rowNum) -> rs.getLong("date")
+        );
     }
 
     @Override
@@ -115,98 +130,87 @@ public class ListingDbSqlImpl implements ListingsDb {
     }
 
     @Override
-    public void addDataFromJson(JSONObject jsonData) {
-
+    public Double getCurrentPrice(String itemName) {
+        Double unitBuyout = getPriceForTimestamp(itemName, getLatestTimeStamp(itemName));
+        return unitBuyout/10000;
     }
 
     @Override
-    public List<ProfitEntry> getProfitEntries(Profession profession) {
-        jdbcTemplate.execute("USE cabbagereport");
-        List<ProfitEntry> entries = new LinkedList<>();
-
-        for (Recipe recipe : recipes) {
-            entries.add(getProfitEntry(recipe));
-        }
-
-        return entries;
-    }
-
-    public ProfitEntry getProfitEntry(Recipe recipe) {
-        Double rawProfit = getTotalPrice(recipe.getProducts());
-        Double costToCraft = getTotalPrice(recipe.getComponents());
-        Double ahCut = round(rawProfit * .05, 4);
-        Double totalProfit = round(rawProfit - costToCraft - ahCut, 4);
-
-        ProfitEntry profitEntry = new ProfitEntry();
-        profitEntry.setName(recipe.getName());
-        profitEntry.setComponents(recipe.getComponents());
-        profitEntry.setSalePrice(rawProfit);
-        profitEntry.setCraftingPrice(costToCraft);
-        profitEntry.setAhCut(ahCut);
-        profitEntry.setTotalprofit(totalProfit);
-
-        return profitEntry;
-    }
-
-    private Double getTotalPrice(Map<String, Integer> components) {
-        Double total = new Double(0);
-        for (Map.Entry<String, Integer> entry : components.entrySet()) {
-            total += (getLatestPrice(entry.getKey()) * entry.getValue());
-        }
-        return total;
+    public Integer getLatestQuantity(String itemName) {
+        return jdbcTemplate.queryForObject("SELECT SUM(numPerStack) " +
+                        "FROM listings " +
+                        "WHERE date = ? AND " +
+                        "itemName = ?",
+                new Object[]{getLatestTimeStamp(itemName), itemName},
+                Integer.class);
     }
 
     @Override
-    public ItemPageData getItemPageData(String name) {
-        jdbcTemplate.execute("USE cabbagereport");
-        ItemPageData itemPageData = new ItemPageData();
-        List<Listing> weeklyListings = getListingsForInterval(name, 604800000l);
-        List<Listing> monthlyListings = getListingsForInterval(name, 2419200000l);
-        Long[][] weeklyQuantity = HCUtil.listToQuantityArray(weeklyListings);
-        itemPageData.setItemName(name);
-        itemPageData.setPrice(getLatestPrice(name));
-        itemPageData.setQuantity(weeklyQuantity[weeklyQuantity.length-1][1].intValue());
-        itemPageData.setWeeklyPrice(HCUtil.listToPriceArray(weeklyListings));
-        itemPageData.setWeeklyQuantity(HCUtil.listToQuantityArray(weeklyListings));
-        itemPageData.setMonthlyPrice(HCUtil.listToPriceArray(monthlyListings));
-        itemPageData.setMonthlyQuantity(HCUtil.listToQuantityArray(monthlyListings));
-        itemPageData.setWeeklySellers(getLatestSellers(name));
-        itemPageData.setMonthlySellers(getLatestSellers(name));
-        itemPageData.setItemNames(getItemNames());
-        return itemPageData;
+    public Long[][] getPricesForInterval(String itemName, long l) {
+        List<Long[]> prices = jdbcTemplate.query(
+                "SELECT date, MIN(unitBuyout) " +
+                "FROM listings " +
+                "WHERE " +
+                "itemname = ? " +
+                "AND date >= ? " +
+                "GROUP BY date " +
+                "ORDER BY date",
+                new Object[]{itemName, l},
+                new ArrayRowMapper());
+
+        Long[][] result = new Long[prices.size()][2];
+        for (Long[] entry : prices) {
+            result[prices.indexOf(entry)] = entry;
+        }
+        return result;
     }
 
     @Override
-    public Double getLatestPrice(String name) {
-        return getPriceForTimestamp(name, getLatestTimeStamp(name));
-    }
+    public Long[][] getQuantitiesForInterval(String itemName, long l) {
+        List<Long[]> quantities = jdbcTemplate.query(
+                "SELECT date, SUM(numPerStack) " +
+                        "FROM listings " +
+                        "WHERE " +
+                        "itemname = ? " +
+                        "AND date >= ? " +
+                        "GROUP BY date " +
+                        "ORDER BY date",
+                new Object[]{itemName, l},
+                new QuantityRowMapper());
 
-    private Map<String, Integer> getLatestSellers(String name) {
-        Long lastTs = getLatestTimeStamp(name);
-        List<Listing> listings = getListingsForTimeStamp(name, lastTs);
-        Map<String, Integer> sellers = new HashMap<>();
-        for (Listing listing : listings) {
-            String user = listing.getUserName();
-            Integer quantity = listing.getNumStacks() * listing.getNumPerStack();
-            if (sellers.get(user) == null) {
-                sellers.put(user, quantity);
-            } else {
-                Integer newQuantity = sellers.get(user) + quantity;
-                sellers.put(user, newQuantity);
-            }
+        Long[][] result = new Long[quantities.size()][2];
+        for (Long[] entry : quantities) {
+            result[quantities.indexOf(entry)] = entry;
         }
-
-        return HCUtil.sortByValue(sellers);
-
+        return result;
     }
 
-    private List<Listing> getListingsForTimeStamp(String name, Long lastTs) {
+    @Override
+    public Map<String, Integer> getSellers(String itemName) {
+        List<Object[]> entries = jdbcTemplate.query(
+                "SELECT userName, SUM(numPerStack) " +
+                "FROM listings " +
+                "WHERE itemName=? " +
+                "AND date = ? " +
+                "GROUP BY userName " +
+                "ORDER BY SUM(numPerStack)",
+                new Object[]{itemName, getLatestTimeStamp(itemName)},
+                new EntryRowmapper());
+
+        Map<String, Integer> result = new TreeMap<>();
+        for (Object[] entry : entries) {
+            result.put((String) entry[0], (Integer) entry[1]);
+        }
+        return result;
+    }
+
+    private List<Listing> getListingsForTimeStamp(String name, Long timeStamp) {
         return jdbcTemplate.query(
                 "SELECT * FROM listings " +
                         "WHERE " +
                         "itemName = ? AND " +
                         "date = ?",
-                new Object[]{name, lastTs},
+                new Object[]{name, timeStamp},
                 new ListingRowMapper()
         );
     }
@@ -231,26 +235,6 @@ public class ListingDbSqlImpl implements ListingsDb {
 
     }
 
-    private List<Listing> getListingsForInterval(String name, long l) {
-        Long startingTs = System.currentTimeMillis() - l;
-        return jdbcTemplate.query(
-                "SELECT * FROM listings " +
-                        "WHERE " +
-                        "itemName = ? AND " +
-                        "date >= ?",
-                new Object[]{name, startingTs},
-                new ListingRowMapper()
-        );
-    }
-
-    public static double round(double value, int places) {
-        if (places < 0) throw new IllegalArgumentException();
-
-        BigDecimal bd = BigDecimal.valueOf(value);
-        bd = bd.setScale(places, RoundingMode.HALF_UP);
-        return bd.doubleValue();
-    }
-
 
     private class ListingRowMapper implements RowMapper<Listing> {
         @Override
@@ -265,6 +249,27 @@ public class ListingDbSqlImpl implements ListingsDb {
                     rs.getInt("unitBuyout"),
                     rs.getLong("date")
             );
+        }
+    }
+
+    private class ArrayRowMapper implements RowMapper<Long[]> {
+        @Override
+        public Long[] mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return new Long[]{rs.getLong("date"), rs.getLong("MIN(unitBuyout)")};
+        }
+    }
+
+    private class QuantityRowMapper implements RowMapper<Long[]> {
+        @Override
+        public Long[] mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return new Long[]{rs.getLong("date"), rs.getLong("SUM(numPerStack)")};
+        }
+    }
+
+    private class EntryRowmapper implements RowMapper<Object[]> {
+        @Override
+        public Object[] mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return new Object[]{rs.getString("userName"), rs.getInt("SUM(NumPerStack)")};
         }
     }
 }

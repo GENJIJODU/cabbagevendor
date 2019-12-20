@@ -6,12 +6,19 @@ import home.crafting.ProfitEntry;
 import org.json.simple.JSONObject;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ListingsDb {
-    void addDataFromJson(JSONObject jsonData);
-    ItemPageData getItemPageData(String name);
     int[] addListings(List<Listing> listings);
     String[] getItemNames();
-    List<ProfitEntry> getProfitEntries(Profession profession);
-    Double getLatestPrice(String name);
+
+    Double getCurrentPrice(String itemName);
+
+    Integer getLatestQuantity(String itemName);
+
+    Long[][] getPricesForInterval(String itemName, long l);
+
+    Long[][] getQuantitiesForInterval(String itemName, long l);
+
+    Map<String, Integer> getSellers(String itemName);
 }

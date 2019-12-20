@@ -34,7 +34,7 @@
 			<form autocomplete="off" action="/itemPage" method="post">
 				<input list="itemNames" type="string" name="itemName" placeholder="type item name to search ..."/><br/>
 				<datalist id="itemNames">
-					<th:block th:each="name :${data.itemNames}">
+					<th:block th:each="name :${itemNames}">
 						<option th:value="${name}">
 					</th:block>
 				</datalist>
