@@ -1,21 +1,12 @@
 package home.database;
 
-import home.crafting.Profession;
-import home.crafting.ProfitEntry;
 import home.crafting.Recipe;
 import home.crafting.CraftingRecipes;
-import home.view.HCUtil;
-import home.view.ItemPageData;
-import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
-import org.thymeleaf.util.MapUtils;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.sql.*;
 import java.util.*;
 
@@ -131,8 +122,7 @@ public class ListingDbSqlImpl implements ListingsDb {
 
     @Override
     public Double getCurrentPrice(String itemName) {
-        Double unitBuyout = getPriceForTimestamp(itemName, getLatestTimeStamp(itemName));
-        return unitBuyout/10000;
+        return getPriceForTimestamp(itemName, getLatestTimeStamp(itemName));
     }
 
     @Override
@@ -204,26 +194,13 @@ public class ListingDbSqlImpl implements ListingsDb {
         return result;
     }
 
-    private List<Listing> getListingsForTimeStamp(String name, Long timeStamp) {
-        return jdbcTemplate.query(
-                "SELECT * FROM listings " +
-                        "WHERE " +
-                        "itemName = ? AND " +
-                        "date = ?",
-                new Object[]{name, timeStamp},
-                new ListingRowMapper()
-        );
-    }
-
     private Double getPriceForTimestamp(String name, Long lastTs) {
-        Integer unitBuyout = jdbcTemplate.queryForObject("SELECT MIN(unitBuyout) " +
+        return jdbcTemplate.queryForObject("SELECT MIN(unitBuyout) " +
                         "FROM listings " +
                         "WHERE date = ? AND " +
                         "itemName = ?",
                 new Object[]{lastTs, name},
-                Integer.class);
-
-        return unitBuyout.doubleValue()/10000;
+                Double.class)/10000;
     }
 
     private Long getLatestTimeStamp(String name) {
@@ -233,23 +210,6 @@ public class ListingDbSqlImpl implements ListingsDb {
                 new Object[]{name},
                 Long.class);
 
-    }
-
-
-    private class ListingRowMapper implements RowMapper<Listing> {
-        @Override
-        public Listing mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new Listing(
-                    rs.getString("itemName"),
-                    rs.getString("userName"),
-                    rs.getInt("numStacks"),
-                    rs.getInt("numPerStack"),
-                    rs.getInt("totalBid"),
-                    rs.getInt("totalBuyout"),
-                    rs.getInt("unitBuyout"),
-                    rs.getLong("date")
-            );
-        }
     }
 
     private class ArrayRowMapper implements RowMapper<Long[]> {
