@@ -42,7 +42,6 @@ public class Dao {
             itemPageData.setMonthlySellers(listingsDb.getSellers(itemName));
 
             itemCache.put(itemName, itemPageData);
-            updateLatestTimeStamp();
             return itemPageData;
         } else {
             System.out.println("returning cached page data....");
@@ -111,10 +110,18 @@ public class Dao {
     }
 
     private boolean databaseHasUpdated() {
-        return !latestScan.equals(listingsDb.getLatestTimeStamp());
+        if (!latestScan.equals(listingsDb.getLatestTimeStamp())) {
+            latestScan = listingsDb.getLatestTimeStamp();
+            itemCache = new HashMap<>();
+            professionCache = new HashMap<>();
+            itemNamesCache = null;
+            return true;
+        }
+        return false;
     }
 
     private void updateLatestTimeStamp() {
         latestScan = listingsDb.getLatestTimeStamp();
     }
+
 }

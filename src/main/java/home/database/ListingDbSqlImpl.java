@@ -213,6 +213,7 @@ public class ListingDbSqlImpl implements ListingsDb {
     }
 
     private Long getLatestTimeStamp(String name) {
+        jdbcTemplate.execute("USE cabbagereport");
         return jdbcTemplate.queryForObject("SELECT MAX(date) " +
                 "FROM listings " +
                 "WHERE itemName = ?",
