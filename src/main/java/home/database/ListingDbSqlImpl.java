@@ -147,12 +147,7 @@ public class ListingDbSqlImpl implements ListingsDb {
                 "ORDER BY date",
                 new Object[]{itemName, l},
                 new ArrayRowMapper());
-
-        Long[][] result = new Long[prices.size()][2];
-        for (Long[] entry : prices) {
-            result[prices.indexOf(entry)] = entry;
-        }
-        return result;
+        return listToArray(prices);
     }
 
     @Override
@@ -167,10 +162,13 @@ public class ListingDbSqlImpl implements ListingsDb {
                         "ORDER BY date",
                 new Object[]{itemName, l},
                 new QuantityRowMapper());
+        return listToArray(quantities);
+    }
 
-        Long[][] result = new Long[quantities.size()][2];
-        for (Long[] entry : quantities) {
-            result[quantities.indexOf(entry)] = entry;
+    private Long[][] listToArray(List<Long[]> input) {
+        Long[][] result = new Long[input.size()][2];
+        for (Long[] entry : input) {
+            result[input.indexOf(entry)] = entry;
         }
         return result;
     }
