@@ -19,6 +19,77 @@ public class CraftingRecipes {
                 new HashMap<>(),
                 Stream.of(new Object[][] {{ "Arcanite Bar", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
         ));
+        all.add(new Recipe(
+                Profession.Alchemy,
+                "Recipe: Transmute Iron to Gold",
+                Stream.of(new Object[][] {{ "Iron Bar", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][] {{ "Gold Bar", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        all.add(new Recipe(
+                Profession.Alchemy,
+                "Recipe: Transmute Mithril to Truesilver",
+                Stream.of(new Object[][] {{ "Mithril Bar", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][] {{ "Truesilver Bar", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+
+        all.add(new Recipe(
+                Profession.Alchemy,
+                "Recipe: Transmute Air to Fire",
+                Stream.of(new Object[][] {{ "Essence of Air", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][] {{ "Essence of Fire", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        all.add(new Recipe(
+                Profession.Alchemy,
+                "Recipe: Transmute Earth to Life",
+                Stream.of(new Object[][] {{ "Essence of Earth", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][] {{ "Essence of Life", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        all.add(new Recipe(
+                Profession.Alchemy,
+                "Recipe: Transmute Earth to Water",
+                Stream.of(new Object[][] {{ "Essence of Earth", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][] {{ "Essence of Water", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        all.add(new Recipe(
+                Profession.Alchemy,
+                "Recipe: Transmute Life to Earth",
+                Stream.of(new Object[][] {{ "Essence of Life", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][] {{ "Essence of Earth", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        all.add(new Recipe(
+                Profession.Alchemy,
+                "Recipe: Transmute Fire to Earth",
+                Stream.of(new Object[][] {{ "Essence of Fire", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][] {{ "Essence of Earth", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        all.add(new Recipe(
+                Profession.Alchemy,
+                "Recipe: Transmute Undeath to Water",
+                Stream.of(new Object[][] {{ "Essence of Undeath", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][] {{ "Essence of Water", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        all.add(new Recipe(
+                Profession.Alchemy,
+                "Recipe: Transmute Water to Air",
+                Stream.of(new Object[][] {{ "Essence of Water", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][] {{ "Essence of Air", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        all.add(new Recipe(
+                Profession.Alchemy,
+                "Recipe: Transmute Water to Undeath",
+                Stream.of(new Object[][] {{ "Essence of Water", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][] {{ "Essence of Undeath", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
 
 
         all.add(new Recipe(

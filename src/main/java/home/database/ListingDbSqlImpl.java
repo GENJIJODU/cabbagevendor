@@ -2,9 +2,12 @@ package home.database;
 
 import home.crafting.Recipe;
 import home.crafting.CraftingRecipes;
+import org.apache.tomcat.util.buf.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
@@ -200,6 +203,29 @@ public class ListingDbSqlImpl implements ListingsDb {
                 Long.class);
     }
 
+    @Override
+    public Map<String, Double> getPrices(Set<String> keySet) {
+        NamedParameterJdbcTemplate namedParameterTemplate = new NamedParameterJdbcTemplate(jdbcTemplate.getDataSource());
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("timeStamp", getLatestTimeStamp());
+        parameters.addValue("names", keySet);
+        System.out.println("getting prices for: " + keySet.toString());
+        List<Object[]> pairs = namedParameterTemplate.query("SELECT itemName, MIN(unitBuyout) " +
+                        "FROM listings " +
+                        "WHERE date = :timeStamp " +
+                        "AND itemName IN (:names) " +
+                        "GROUP BY itemName",
+                parameters,
+                new ItemToPricemapper());
+
+        System.out.println("Success?");
+        Map<String, Double> output = new HashMap<>();
+        for (Object[] pair : pairs) {
+            output.put((String) pair[0], ((Integer) pair[1]).doubleValue());
+        }
+        return output;
+    }
+
     private Double getPriceForTimestamp(String name, Long lastTs) {
         jdbcTemplate.execute("USE cabbagereport");
         return jdbcTemplate.queryForObject("SELECT MIN(unitBuyout) " +
@@ -207,8 +233,10 @@ public class ListingDbSqlImpl implements ListingsDb {
                         "WHERE date = ? AND " +
                         "itemName = ?",
                 new Object[]{lastTs, name},
-                Double.class)/10000;
+                Double.class);
     }
+
+
 
     private Long getLatestTimeStamp(String name) {
         jdbcTemplate.execute("USE cabbagereport");
@@ -237,7 +265,14 @@ public class ListingDbSqlImpl implements ListingsDb {
     private class EntryRowmapper implements RowMapper<Object[]> {
         @Override
         public Object[] mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new Object[]{rs.getString("userName"), rs.getInt("SUM(NumPerStack)")};
+            return new Object[]{rs.getString("userName"), rs.getInt("SUM(numPerStack)")};
+        }
+    }
+
+    private class ItemToPricemapper implements RowMapper<Object[]> {
+        @Override
+        public Object[] mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return new Object[]{rs.getString("itemName"), rs.getInt("MIN(unitBuyout)")};
         }
     }
 }

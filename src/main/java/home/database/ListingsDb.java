@@ -7,6 +7,7 @@ import org.json.simple.JSONObject;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface ListingsDb {
     int[] addListings(List<Listing> listings);
@@ -23,4 +24,6 @@ public interface ListingsDb {
     Map<String, Integer> getSellers(String itemName);
 
     Long getLatestTimeStamp();
+
+    Map<String, Double> getPrices(Set<String> keySet);
 }

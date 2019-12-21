@@ -10,10 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class Dao {
@@ -63,8 +60,26 @@ public class Dao {
     public List<ProfitEntry> getProfitEntries(Profession profession) {
         if (!professionCache.containsKey(profession) || databaseHasUpdated()) {
             List<ProfitEntry> entries = new LinkedList<>();
+            Map<String, Double> allItemPrices = getAllItemPrices(CraftingRecipes.getAll());
             for (Recipe recipe : CraftingRecipes.getAll()) {
-                entries.add(getProfitEntry(recipe));
+                Set<String> availableItems = allItemPrices.keySet();
+                if (availableItems.containsAll(recipe.getComponents().keySet()) && availableItems.containsAll(recipe.getProducts().keySet())) {
+                    Double productValue = getPriceForItems(recipe.getProducts(), allItemPrices);
+                    Double costToCraft = getPriceForItems(recipe.getComponents(), allItemPrices);
+                    Double ahCut = round(productValue * .05, 4);
+                    Double totalProfit = round(productValue - costToCraft - ahCut, 4);
+
+                    ProfitEntry profitEntry = new ProfitEntry();
+                    profitEntry.setName(recipe.getName());
+                    profitEntry.setComponents(recipe.getComponents());
+                    profitEntry.setSalePrice(productValue);
+                    profitEntry.setCraftingPrice(costToCraft);
+                    profitEntry.setAhCut(ahCut);
+                    profitEntry.setTotalprofit(totalProfit);
+                    entries.add(profitEntry);
+                } else {
+                    System.out.println("Skipping recipe " + recipe.getName());
+                }
             }
 
             professionCache.put(profession, entries);
@@ -76,29 +91,21 @@ public class Dao {
         }
     }
 
-    public ProfitEntry getProfitEntry(Recipe recipe) {
-        Double productValue = getTotalPrice(recipe.getProducts());
-        Double costToCraft = getTotalPrice(recipe.getComponents());
-        Double ahCut = round(productValue * .05, 4);
-        Double totalProfit = round(productValue - costToCraft - ahCut, 4);
-
-        ProfitEntry profitEntry = new ProfitEntry();
-        profitEntry.setName(recipe.getName());
-        profitEntry.setComponents(recipe.getComponents());
-        profitEntry.setSalePrice(productValue);
-        profitEntry.setCraftingPrice(costToCraft);
-        profitEntry.setAhCut(ahCut);
-        profitEntry.setTotalprofit(totalProfit);
-
-        return profitEntry;
+    private Double getPriceForItems(Map<String, Integer> products, Map<String, Double> allItemPrices) {
+        Double total = Double.valueOf(0);
+        for (Map.Entry<String, Integer> entry : products.entrySet()) {
+            total += allItemPrices.get(entry.getKey()) * entry.getValue();
+        }
+        return round(total/10000, 4);
     }
 
-    private Double getTotalPrice(Map<String, Integer> items) {
-        Double total = new Double(0);
-        for (Map.Entry<String, Integer> entry : items.entrySet()) {
-            total += (listingsDb.getCurrentPrice(entry.getKey()) * entry.getValue());
+    private Map<String, Double> getAllItemPrices(List<Recipe> recipes) {
+        Set<String> items = new HashSet<>();
+        for (Recipe recipe : recipes) {
+            items.addAll(recipe.getComponents().keySet());
+            items.addAll(recipe.getProducts().keySet());
         }
-        return total;
+        return listingsDb.getPrices(items);
     }
 
     public static double round(double value, int places) {

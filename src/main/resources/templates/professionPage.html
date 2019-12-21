@@ -4,25 +4,12 @@
 <head>
     <meta charset="UTF-8" />
     <title>The Cabbage Report</title>
-    <style>
-        .container {
-            width: 90%;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        .sidebar {
-            position: relative;
-            float: right;
-            width: 14em;
-            line-height: 1.4em;
-            right: -2em;
-        }
-    </style>
-    <!-- Latest compild and minified CSS -->
+    <link rel="stylesheet"
+          th:href="@{/css/styles.css}">
     <link rel="stylesheet"
           href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
-
-    <!-- Optional theme -->
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" />
     <link rel="stylesheet"
           href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" />
 </head>
@@ -34,36 +21,38 @@
     <span style="font-size: 25pt" th:text="${profession}"/>
     <br/>
 
-    <table>
-        <tr>
-            <th>Name</th>
-            <th>Components</th>
-            <th>Price2Craft</th>
-            <th>AH Price</th>
-            <th>AH Cut</th>
-            <th>Total Profit</th>
-        </tr>
-        <th:block th:each="entry :${profitEntries}">
+    <div class="containerBody">
+        <table>
             <tr>
-                <td th:text="'[' + ${entry.name} + ']'"/>
-                <td>
-                    <table>
-                        <th:block th:each="item :${entry.components}">
-                            <tr>
-                                <td>
-                                    <a th:text="${item.value} + 'x ' + ${item.key}" th:href="@{'/itemPage/' + ${item.key}}"/>
-                                </td>
-                            </tr>
-                        </th:block>
-                    </table>
-                </td>
-                <td th:text="${entry.craftingPrice} + 'g'"/>
-                <td th:text="${entry.salePrice} + 'g'"/>
-                <td th:text="${entry.ahCut} + 'g'"/>
-                <td th:text="${entry.totalprofit} + 'g'"/>
+                <th>Name</th>
+                <th>Components</th>
+                <th>Price2Craft</th>
+                <th>AH Price</th>
+                <th>AH Cut</th>
+                <th>Total Profit</th>
             </tr>
-        </th:block>
-    </table>
+            <th:block th:each="entry :${profitEntries}" class="striped">
+                <tr>
+                    <td padding="5px" th:text="'[' + ${entry.name} + ']'"/>
+                    <td padding="5px">
+                        <table>
+                            <th:block th:each="item :${entry.components}">
+                                <tr>
+                                    <td padding="2px">
+                                        <a th:text="${item.value} + 'x [' + ${item.key} + ']'" th:href="@{'/itemPage/' + ${item.key}}"/>
+                                    </td>
+                                </tr>
+                            </th:block>
+                        </table>
+                    </td>
+                    <td class="alignRight" th:text="${entry.craftingPrice} + 'g'"/>
+                    <td class="alignRight" th:text="${entry.salePrice} + 'g'"/>
+                    <td class="alignRight" th:text="${entry.ahCut} + 'g'"/>
+                    <td class="alignRight" th:text="${entry.totalprofit} + 'g'"/>
+                </tr>
+            </th:block>
+        </table>
+    </div>
 
     <div class="sidebar">
         <form action="#" th:action="@{/itemPage}"   method="post">

@@ -1,0 +1,33 @@
+a {
+    color: #2e342e !important;
+}
+
+body {
+    background-color: #d8e4d8 !important;
+}
+
+.container {
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.containerBody {
+    float: left;
+}
+.sidebar {
+    color: black !important;
+    position: relative;
+    float: right;
+    width: 14em;
+    line-height: 1.4em;
+    right: -2em;
+}
+
+.striped:nth-child(even) {
+    background-color: #97A397 !important;
+}
+
+.alignRight {
+    text-align: right;
+}

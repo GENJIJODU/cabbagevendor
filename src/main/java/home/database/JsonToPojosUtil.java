@@ -23,7 +23,6 @@ public class JsonToPojosUtil {
             jsonObject = getJsonFromPath(path);
             Map<String, String> itemIdToName = getItemIdToName(jsonObject);
             for (JSONObject scan : getScans(jsonObject)) {
-//            for (JSONObject scan : getLatestScan(jsonObject)) {
                 long ts = getTimeStamp(scan);
                 if (result.get(ts) == null) {
                     result.put(ts, scanToListings(scan, itemIdToName));
@@ -91,21 +90,6 @@ public class JsonToPojosUtil {
 
     private static long getTimeStamp(JSONObject scan) {
         return ((Long) scan.get("ts") * 1000);
-    }
-
-    private static List<JSONObject> getLatestScan(JSONObject jsonObject) {
-        JSONObject latest = null;
-        for (Object object : (JSONArray) jsonObject.get("ah")) {
-            JSONObject jsonEntry = (JSONObject) object;
-            if (latest == null) {
-                latest = jsonEntry;
-            } else if ((Long) latest.get("ts") < (Long) jsonEntry.get("ts")) {
-                latest = jsonEntry;
-            }
-        }
-        List<JSONObject> result = new LinkedList<>();
-        result.add(latest);
-        return result;
     }
 
     private static Map<String, String> getItemIdToName(JSONObject jsonObject) {
