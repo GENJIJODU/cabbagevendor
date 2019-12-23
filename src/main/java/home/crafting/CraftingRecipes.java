@@ -1,5 +1,6 @@
 package home.crafting;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -7,6 +8,80 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class CraftingRecipes {
+    List<String> herbs = Arrays.asList(new String[]{
+            "Peacebloom",
+            "Silverleaf",
+            "Earthroot",
+            "Mageroyal",
+            "Briathorn",
+            "Stranglekelp",
+            "Bruiseweed",
+            "Wild Steelbloom",
+            "Grave Moss",
+            "Kimgsblood",
+            "Liferoot",
+            "Fadeleaf",
+            "Goldthorn",
+            "Khadgar's Whisker",
+            "Wintersbite",
+            "Firebloom",
+            "Purple Lotus",
+            "Arthas' Tears",
+            "Sungrass",
+            "Blindweed",
+            "GHost Mushroom",
+            "Gromsblood",
+            "Golden Sansam",
+            "Dreamfoil",
+            "Mountain Silversage",
+            "Plaguebloom",
+            "Icecap",
+            "Black Lotus"});
+
+    List<String> mining
+            = Arrays.asList(new String[]{
+            "Copper Ore",
+            "Silver Ore",
+            "Iron Ore",
+            "Gold Ore",
+            "Mithril Ore",
+            "Truesilver Ore",
+            "Dark Iron Ore",
+            "Thorium Ore",
+            "Small Obsidian Shard",
+            "Large Obsidian Shard",
+            "THorium Ore",
+
+            "Rough Stone",
+            "Heavy Stone",
+            "SOlid Stone",
+
+            "Malachite",
+            "Tigerseye",
+            "Shadowgem",
+            "Moss Agate",
+            "Lesser Moonstone",
+            "Jade",
+            "Citrine",
+            "Aquamarine",
+            "Star Ruby",
+            "Black Vitrol",
+
+            "Copper Bar",
+            "Tin Bar",
+            "Bronze Bar",
+            "Silver Bar",
+            "Iron Bar",
+            "Gold Bar",
+            "Steel Bar",
+            "Mithril Bar",
+            "Truesilver Bar",
+            "Dark Iron Bar",
+            "THorium Bar",
+            });
+
+
+
     public static List<Recipe> getAll() {
         List<Recipe> all = new LinkedList<>();
 
