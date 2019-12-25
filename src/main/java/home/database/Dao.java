@@ -80,11 +80,40 @@ public class Dao {
                     categoryMap.get(category.getKey()).put(gatherable, round(allPrices.get(gatherable)/10000, 4));
             }
         }
+        sortByPrice(categoryMap);
         return categoryMap;
+    }
+
+    private void sortByPrice(Map<String, Map<String, Double>> categoryMap) {
+        for (String category : categoryMap.keySet()) {
+            categoryMap.put(category, sortMapByValue(categoryMap.get(category)));
+        }
+    }
+    public static Map<String, Double> sortMapByValue(Map<String, Double> map){
+        Map result = sortByValues(map);
+        return result;
     }
 
     public Map<String, List<ProfitEntry>> getProfitEntryMap(Profession profession) {
         return getAlchemyData();
+    }
+
+    public static <K, V extends Comparable<V>> Map<K, V>
+    sortByValues(final Map<K, V> map) {
+        Comparator<K> valueComparator =
+                (k1, k2) -> {
+                    int compare =
+                            map.get(k2).compareTo(map.get(k1));
+                    if (compare == 0)
+                        return 1;
+                    else
+                        return compare;
+                };
+
+        Map<K, V> sortedByValues =
+                new TreeMap<>(valueComparator);
+        sortedByValues.putAll(map);
+        return sortedByValues;
     }
 
     private Map<String, List<ProfitEntry>> getAlchemyData() {
@@ -105,6 +134,7 @@ public class Dao {
                     }
                 }
             }
+            sortByMostProfit(entries);
             professionCache = entries;
             updateLatestTimeStamp();
             return entries;
@@ -113,6 +143,14 @@ public class Dao {
             return professionCache;
         }
     }
+
+    private void sortByMostProfit(Map<String, List<ProfitEntry>> entries) {
+        for (String key : entries.keySet()) {
+            entries.get(key).sort((o1, o2) -> o2.getTotalprofit().compareTo(o1.getTotalprofit()));
+        }
+
+    }
+
 
     private static boolean dataExistsForRecipe(Recipe recipe, Set<String> availableItems) {
         return availableItems.containsAll(recipe.getComponents().keySet()) &&

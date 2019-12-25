@@ -20,30 +20,25 @@
 <div class="container">
     <div class="containerBody">
         <th:block th:each="element : ${dataMap}" width="100%">
-            <span style="font-size: 25pt" th:text="${element.key}"/>
+            <span style="font-size: 20pt" th:text="${element.key}"/>
             <br/>
-            <table>
+            <table class="hoverTable">
                 <tr>
                     <th>Name</th>
                     <th>Components</th>
-                    <th>Price2Craft</th>
-                    <th>AH Price</th>
+                    <th>Cost to Craft</th>
+                    <th>AH Sale Price</th>
                     <th>AH Cut</th>
                     <th>Total Profit</th>
                 </tr>
-                <th:block th:each="entry :${element.value}" class="striped">
+                <th:block th:each="entry :${element.value}">
                     <tr>
-                        <td padding="5px" th:text="'[' + ${entry.name} + ']'"/>
-                        <td padding="5px">
-                            <table>
-                                <th:block th:each="item :${entry.components}">
-                                    <tr>
-                                        <td padding="2px">
-                                            <a th:text="${item.value} + 'x [' + ${item.key} + ']'" th:href="@{'/itemPage/' + ${item.key}}"/>
-                                        </td>
-                                    </tr>
-                                </th:block>
-                            </table>
+                        <td th:text="'[' + ${entry.name} + ']'"/>
+                        <td>
+                            <th:block th:each="item :${entry.components}">
+                                <a th:text="${item.value} + 'x [' + ${item.key} + ']'" th:href="@{'/itemPage/' + ${item.key}}"/>
+                                <br/>
+                            </th:block>
                         </td>
                         <td class="alignRight" th:text="${entry.craftingPrice} + 'g'"/>
                         <td class="alignRight" th:text="${entry.salePrice} + 'g'"/>

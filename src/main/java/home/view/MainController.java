@@ -28,7 +28,7 @@ public class MainController {
         model.addAttribute("profession", profession);
         model.addAttribute("itemNames", dao.getItemNames());
         model.addAttribute("profitEntries", dao.getProfitEntryMap(Profession.valueOf(profession)));
-        return "professionPage";
+        return "craftingPage";
     }
 
     @RequestMapping("/profession/Alchemy")
@@ -36,15 +36,16 @@ public class MainController {
         model.addAttribute("profession", "Alchemy");
         model.addAttribute("itemNames", dao.getItemNames());
         model.addAttribute("dataMap", dao.getProfitEntryMap(Profession.valueOf("Alchemy")));
-        return "professionPage";
+        return "craftingPage";
     }
+
 
     @RequestMapping("/profession/Mining")
     public String generateMiningPage(Model model) {
         model.addAttribute("profession", "Mining");
         model.addAttribute("itemNames", dao.getItemNames());
         model.addAttribute("dataMap", dao.getMiningMap());
-        return "miningPage";
+        return "gatheringPage";
     }
 
     @RequestMapping("/profession/Skinning")
@@ -52,7 +53,7 @@ public class MainController {
         model.addAttribute("profession", "Skinning");
         model.addAttribute("itemNames", dao.getItemNames());
         model.addAttribute("dataMap", dao.getSkinningMap());
-        return "miningPage";
+        return "gatheringPage";
     }
 
     @RequestMapping("/profession/Herbalism")
@@ -60,7 +61,7 @@ public class MainController {
         model.addAttribute("profession", "Herbalism");
         model.addAttribute("itemNames", dao.getItemNames());
         model.addAttribute("dataMap", dao.getHerbalismMap());
-        return "miningPage";
+        return "gatheringPage";
     }
 
     @RequestMapping("/home")

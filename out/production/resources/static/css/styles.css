@@ -24,10 +24,19 @@ body {
     right: -2em;
 }
 
-.striped:nth-child(even) {
-    background-color: #97A397 !important;
+td, th {
+    padding-right: 5px !important;
 }
 
 .alignRight {
     text-align: right;
 }
+
+tr:nth-child(even) {
+    background-color: #bdc8bd;
+}
+
+tr:hover {
+    background-color: #9ea99e;
+}
+

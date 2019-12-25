@@ -29,7 +29,9 @@
                 </tr>
                 <th:block th:each="entry :${category.value}" class="striped">
                     <tr>
-                        <td padding="5px" th:text="'[' + ${entry.key} + ']'"/>
+                        <td>
+                            <a th:text="'[' + ${entry.key} + ']'" th:href="@{'/itemPage/' + ${entry.key}}"/>
+                        </td>
                         <td class="alignRight" th:text="${entry.value} + 'g'"/>
                     </tr>
                 </th:block>
