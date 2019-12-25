@@ -18,40 +18,42 @@
     THE CABBAGE REPORT.
 </h1>
 <div class="container">
-    <span style="font-size: 25pt" th:text="${profession}"/>
-    <br/>
-
     <div class="containerBody">
-        <table>
-            <tr>
-                <th>Name</th>
-                <th>Components</th>
-                <th>Price2Craft</th>
-                <th>AH Price</th>
-                <th>AH Cut</th>
-                <th>Total Profit</th>
-            </tr>
-            <th:block th:each="entry :${profitEntries}" class="striped">
+        <th:block th:each="element : ${dataMap}" width="100%">
+            <span style="font-size: 25pt" th:text="${element.key}"/>
+            <br/>
+            <table>
                 <tr>
-                    <td padding="5px" th:text="'[' + ${entry.name} + ']'"/>
-                    <td padding="5px">
-                        <table>
-                            <th:block th:each="item :${entry.components}">
-                                <tr>
-                                    <td padding="2px">
-                                        <a th:text="${item.value} + 'x [' + ${item.key} + ']'" th:href="@{'/itemPage/' + ${item.key}}"/>
-                                    </td>
-                                </tr>
-                            </th:block>
-                        </table>
-                    </td>
-                    <td class="alignRight" th:text="${entry.craftingPrice} + 'g'"/>
-                    <td class="alignRight" th:text="${entry.salePrice} + 'g'"/>
-                    <td class="alignRight" th:text="${entry.ahCut} + 'g'"/>
-                    <td class="alignRight" th:text="${entry.totalprofit} + 'g'"/>
+                    <th>Name</th>
+                    <th>Components</th>
+                    <th>Price2Craft</th>
+                    <th>AH Price</th>
+                    <th>AH Cut</th>
+                    <th>Total Profit</th>
                 </tr>
-            </th:block>
-        </table>
+                <th:block th:each="entry :${element.value}" class="striped">
+                    <tr>
+                        <td padding="5px" th:text="'[' + ${entry.name} + ']'"/>
+                        <td padding="5px">
+                            <table>
+                                <th:block th:each="item :${entry.components}">
+                                    <tr>
+                                        <td padding="2px">
+                                            <a th:text="${item.value} + 'x [' + ${item.key} + ']'" th:href="@{'/itemPage/' + ${item.key}}"/>
+                                        </td>
+                                    </tr>
+                                </th:block>
+                            </table>
+                        </td>
+                        <td class="alignRight" th:text="${entry.craftingPrice} + 'g'"/>
+                        <td class="alignRight" th:text="${entry.salePrice} + 'g'"/>
+                        <td class="alignRight" th:text="${entry.ahCut} + 'g'"/>
+                        <td class="alignRight" th:text="${entry.totalprofit} + 'g'"/>
+                    </tr>
+                </th:block>
+            </table>
+            <br>
+        </th:block>
     </div>
 
     <div class="sidebar">
@@ -77,10 +79,10 @@
         <a href="profession/Engineering">Engineering</a><br/>
         <br/>
         <h5>Gathering</h5>
-        <a href="profession/Herbalism">Herbalism</a><br/>
-        <a href="profession/Mining">Mining</a><br/>
-        <a href="profession/Skinning">Skinning</a><br/>
-    </div>
+        <a href="/profession/Herbalism">Herbalism</a><br/>
+        <a href="/profession/Mining">Mining</a><br/>
+        <a href="/profession/Skinning">Skinning</a><br/>
+    </div>/
 
 </div>
 </body>

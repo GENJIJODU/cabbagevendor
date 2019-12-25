@@ -18,13 +18,14 @@ public class Dao {
     Long latestScan = 0l;
     ListingsDb listingsDb;
     Map<String, ItemPageData> itemCache = new HashMap<>();
-    Map<Profession, List<ProfitEntry>> professionCache = new HashMap<>();
+    Map<String, List<ProfitEntry>> professionCache = new HashMap<>();
     String[] itemNamesCache;
 
     @Autowired
     public Dao(ListingsDb listingsDb) {
         this.listingsDb = listingsDb;
     }
+
     public ItemPageData getItemPageData(String itemName) {
         if(!itemCache.containsKey(itemName) || databaseHasUpdated()) {
             ItemPageData itemPageData = new ItemPageData();
@@ -57,38 +58,89 @@ public class Dao {
         return itemNamesCache;
     }
 
-    public List<ProfitEntry> getProfitEntries(Profession profession) {
-        if (!professionCache.containsKey(profession) || databaseHasUpdated()) {
-            List<ProfitEntry> entries = new LinkedList<>();
-            Map<String, Double> allItemPrices = getAllItemPrices(CraftingRecipes.getAll());
-            for (Recipe recipe : CraftingRecipes.getAll()) {
-                Set<String> availableItems = allItemPrices.keySet();
-                if (availableItems.containsAll(recipe.getComponents().keySet()) && availableItems.containsAll(recipe.getProducts().keySet())) {
-                    Double productValue = getPriceForItems(recipe.getProducts(), allItemPrices);
-                    Double costToCraft = getPriceForItems(recipe.getComponents(), allItemPrices);
-                    Double ahCut = round(productValue * .05, 4);
-                    Double totalProfit = round(productValue - costToCraft - ahCut, 4);
+    public Map<String, Map<String, Double>> getHerbalismMap() {
+        Map<String, Map<String, Double>> miningMap = new TreeMap<>();
+        Map<String, Double> herbPrices = listingsDb.getPrices(CraftingRecipes.herbs);
+        miningMap.put("Herbs", herbPrices);
+        return miningMap;
+    }
 
-                    ProfitEntry profitEntry = new ProfitEntry();
-                    profitEntry.setName(recipe.getName());
-                    profitEntry.setComponents(recipe.getComponents());
-                    profitEntry.setSalePrice(productValue);
-                    profitEntry.setCraftingPrice(costToCraft);
-                    profitEntry.setAhCut(ahCut);
-                    profitEntry.setTotalprofit(totalProfit);
-                    entries.add(profitEntry);
-                } else {
-                    System.out.println("Skipping recipe " + recipe.getName());
+    public Map<String, Map<String, Double>> getSkinningMap() {
+        Map<String, Map<String, Double>> skinningMap = new TreeMap<>();
+        Map<String, Double> allSkinningPrices = listingsDb.getPrices(CraftingRecipes.allSkinning());
+        for (Map.Entry<String, List<String>> category : CraftingRecipes.skinningMap().entrySet()) {
+            skinningMap.put(category.getKey(), new TreeMap<>());
+            for (String gatherable : category.getValue()) {
+                if (allSkinningPrices.get(gatherable)!=null)
+                    skinningMap.get(category.getKey()).put(gatherable, round(allSkinningPrices.get(gatherable)/10000, 4));
+            }
+        }
+        return skinningMap;
+    }
+
+    public Map<String, Map<String, Double>> getMiningMap() {
+        Map<String, Map<String, Double>> miningMap = new TreeMap<>();
+        Map<String, Double> allMiningPrices = listingsDb.getPrices(CraftingRecipes.allMining());
+        for (Map.Entry<String, List<String>> category : CraftingRecipes.miningMap().entrySet()) {
+            miningMap.put(category.getKey(), new TreeMap<>());
+            for (String gatherable : category.getValue()) {
+                if (allMiningPrices.get(gatherable)!=null)
+                miningMap.get(category.getKey()).put(gatherable, round(allMiningPrices.get(gatherable)/10000, 4));
+            }
+        }
+        return miningMap;
+    }
+
+    public Map<String, List<ProfitEntry>> getProfitEntryMap(Profession profession) {
+        return getAlchemyData();
+    }
+
+    private Map<String, List<ProfitEntry>> getAlchemyData() {
+        if (professionCache.isEmpty()) {
+            Map<String, List<Recipe>> mappedRecipes = CraftingRecipes.getAllMapped();
+            Map<String, Double> allItemPrices = getAllItemPricesForRecipes(CraftingRecipes.getAll());
+            Map<String, List<ProfitEntry>> entries = new TreeMap<>();
+
+            for (Map.Entry<String, List<Recipe>> entry : mappedRecipes.entrySet()) {
+                entries.put(entry.getKey(), new ArrayList<>());
+                for (Recipe recipe : entry.getValue()) {
+                    Set<String> availableItems = allItemPrices.keySet();
+                    if (dataExistsForRecipe(recipe, availableItems)) {
+                        ProfitEntry profitEntry = getEntry(recipe, allItemPrices);
+                        entries.get(entry.getKey()).add(profitEntry);
+                    } else {
+                        System.out.println("Skipping recipe " + recipe.getName());
+                    }
                 }
             }
-
-            professionCache.put(profession, entries);
+            professionCache = entries;
             updateLatestTimeStamp();
             return entries;
         } else {
             System.out.println("returning cached profession data....");
-            return professionCache.get(profession);
+            return professionCache;
         }
+    }
+
+    private static boolean dataExistsForRecipe(Recipe recipe, Set<String> availableItems) {
+        return availableItems.containsAll(recipe.getComponents().keySet()) &&
+                availableItems.containsAll(recipe.getProducts().keySet());
+    }
+
+    private ProfitEntry getEntry(Recipe recipe, Map<String, Double> allItemPrices) {
+        Double productValue = getPriceForItems(recipe.getProducts(), allItemPrices);
+        Double costToCraft = getPriceForItems(recipe.getComponents(), allItemPrices);
+        Double ahCut = round(productValue * .05, 4);
+        Double totalProfit = round(productValue - costToCraft - ahCut, 4);
+
+        ProfitEntry profitEntry = new ProfitEntry();
+        profitEntry.setName(recipe.getName());
+        profitEntry.setComponents(recipe.getComponents());
+        profitEntry.setSalePrice(productValue);
+        profitEntry.setCraftingPrice(costToCraft);
+        profitEntry.setAhCut(ahCut);
+        profitEntry.setTotalprofit(totalProfit);
+        return profitEntry;
     }
 
     private Double getPriceForItems(Map<String, Integer> products, Map<String, Double> allItemPrices) {
@@ -99,7 +151,7 @@ public class Dao {
         return round(total/10000, 4);
     }
 
-    private Map<String, Double> getAllItemPrices(List<Recipe> recipes) {
+    private Map<String, Double> getAllItemPricesForRecipes(List<Recipe> recipes) {
         Set<String> items = new HashSet<>();
         for (Recipe recipe : recipes) {
             items.addAll(recipe.getComponents().keySet());
@@ -130,5 +182,4 @@ public class Dao {
     private void updateLatestTimeStamp() {
         latestScan = listingsDb.getLatestTimeStamp();
     }
-
 }

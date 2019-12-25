@@ -2,7 +2,6 @@ package home.view;
 
 import home.crafting.Profession;
 import home.database.Dao;
-import home.database.ListingsDb;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,8 +27,40 @@ public class MainController {
     public String generateProfessionPage(@PathVariable String profession, Model model) {
         model.addAttribute("profession", profession);
         model.addAttribute("itemNames", dao.getItemNames());
-        model.addAttribute("profitEntries", dao.getProfitEntries(Profession.valueOf(profession)));
+        model.addAttribute("profitEntries", dao.getProfitEntryMap(Profession.valueOf(profession)));
         return "professionPage";
+    }
+
+    @RequestMapping("/profession/Alchemy")
+    public String generateProfessionPage(Model model) {
+        model.addAttribute("profession", "Alchemy");
+        model.addAttribute("itemNames", dao.getItemNames());
+        model.addAttribute("dataMap", dao.getProfitEntryMap(Profession.valueOf("Alchemy")));
+        return "professionPage";
+    }
+
+    @RequestMapping("/profession/Mining")
+    public String generateMiningPage(Model model) {
+        model.addAttribute("profession", "Mining");
+        model.addAttribute("itemNames", dao.getItemNames());
+        model.addAttribute("dataMap", dao.getMiningMap());
+        return "miningPage";
+    }
+
+    @RequestMapping("/profession/Skinning")
+    public String generateSkinningPage(Model model) {
+        model.addAttribute("profession", "Skinning");
+        model.addAttribute("itemNames", dao.getItemNames());
+        model.addAttribute("dataMap", dao.getSkinningMap());
+        return "miningPage";
+    }
+
+    @RequestMapping("/profession/Herbalism")
+    public String generateHerbPage(Model model) {
+        model.addAttribute("profession", "Herbalism");
+        model.addAttribute("itemNames", dao.getItemNames());
+        model.addAttribute("dataMap", dao.getHerbalismMap());
+        return "miningPage";
     }
 
     @RequestMapping("/home")

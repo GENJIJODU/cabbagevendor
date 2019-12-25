@@ -1,8 +1,5 @@
 package home.database;
 
-import home.crafting.Recipe;
-import home.crafting.CraftingRecipes;
-import org.apache.tomcat.util.buf.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -19,20 +16,17 @@ public class ListingDbSqlImpl implements ListingsDb {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
-    List<Recipe> recipes;
-
     public ListingDbSqlImpl(JdbcTemplate jdbcTemplate) throws SQLException {
         this.jdbcTemplate = jdbcTemplate;
 //        createSchema();
         loadDataFromFiles();
-        recipes = CraftingRecipes.getAll();
     }
 
     private void createSchema() {
         jdbcTemplate.execute("USE cabbagereport");
-        System.out.println("Dropping table cabbagereport...");
+        System.out.println("Dropping table listings...");
         jdbcTemplate.execute("DROP TABLE listings");
-        System.out.println("Creating new table...");
+        System.out.println("Creating new table listings...");
         jdbcTemplate.execute("CREATE TABLE listings " +
                 "(id SERIAL," +
                 "itemName VARCHAR(255), " +
