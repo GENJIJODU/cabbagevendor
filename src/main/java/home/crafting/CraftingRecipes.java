@@ -5,7 +5,18 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class CraftingRecipes {
-    public static Set<String> herbs = new HashSet<>(Arrays.asList("Peacebloom",
+    // Mining
+    public static Set<String> allHerbs() {
+        Set<String> result = new HashSet<>();
+        result.addAll(herbs);
+        return  result;
+    }
+    public static Map<String, List<String>> herbMap() {
+        Map<String, List<String>> result = new TreeMap<>();
+        result.put("Herbs", herbs);
+        return result;
+    }
+    public static List<String> herbs = Arrays.asList("Peacebloom",
             "Silverleaf",
             "Earthroot",
             "Mageroyal",
@@ -33,7 +44,7 @@ public class CraftingRecipes {
             "Plaguebloom",
             "Icecap",
             "Black Lotus"
-    ));
+    );
 
     // Mining
     public static Set<String> allMining() {
@@ -149,7 +160,7 @@ public class CraftingRecipes {
             "Heavy Scorpid Scale"
     );
 
-    public static Map<String, List<Recipe>> getAllMapped(){
+    public static Map<String, List<Recipe>> getAlchemyMapped(){
         Map<String, List<Recipe>> result = new TreeMap<>();
         result.put("Transmutations", getTransmutes());
         result.put("Flasks", getFlasks());
@@ -159,8 +170,7 @@ public class CraftingRecipes {
         result.put("Utility Potions", getUtilityPots());
         return result;
     }
-
-    public static List<Recipe> getAll() {
+    public static List<Recipe> getAlchemy() {
         List<Recipe> result = new ArrayList<>();
         result.addAll(getTransmutes());
         result.addAll(getFlasks());
@@ -465,5 +475,45 @@ public class CraftingRecipes {
                 Stream.of(new Object[][] {{ "Elixir of Detect Lesser Invisibility", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
         ));
         return utilityPots;
+    }
+
+
+    public static Map<String, List<Recipe>> getCookingMapped(){
+        Map<String, List<Recipe>> result = new TreeMap<>();
+        result.put("High Lvl Food", getAllCooking());
+        return result;
+    }
+    public static List<Recipe> getAllCooking() {
+        List<Recipe> result = new ArrayList<>();
+        result.addAll(getCookingrecipes());
+        return result;
+    }
+    public static List<Recipe> getCookingrecipes() {
+        List<Recipe> endgameFood = new LinkedList<>();
+        endgameFood.add(new Recipe(
+                Profession.Cooking,
+                "Recipe: Nightfin Soup",
+                Stream.of(new Object[][]{
+                        {"Raw Nightfin Snapper", 1},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][]{{"Nightfin Soup", 1},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        endgameFood.add(new Recipe(
+                Profession.Cooking,
+                "Recipe: Runn Tum Tuber Suprise",
+                Stream.of(new Object[][]{
+                        {"Runn Tum Tuber", 1},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][]{{"Runn Tum Tuber Surprise", 1},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        endgameFood.add(new Recipe(
+                Profession.Cooking,
+                "Recipe: Tender Wolf Steak",
+                Stream.of(new Object[][]{
+                        {"Tender Wolf Meat", 1},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][]{{"Tender Wolf Steak", 1},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        return endgameFood;
     }
 }

@@ -59,36 +59,28 @@ public class Dao {
     }
 
     public Map<String, Map<String, Double>> getHerbalismMap() {
-        Map<String, Map<String, Double>> miningMap = new TreeMap<>();
-        Map<String, Double> herbPrices = listingsDb.getPrices(CraftingRecipes.herbs);
-        miningMap.put("Herbs", herbPrices);
-        return miningMap;
+        return getGatherablePriceMaps(CraftingRecipes.allHerbs(), CraftingRecipes.herbMap());
     }
 
     public Map<String, Map<String, Double>> getSkinningMap() {
-        Map<String, Map<String, Double>> skinningMap = new TreeMap<>();
-        Map<String, Double> allSkinningPrices = listingsDb.getPrices(CraftingRecipes.allSkinning());
-        for (Map.Entry<String, List<String>> category : CraftingRecipes.skinningMap().entrySet()) {
-            skinningMap.put(category.getKey(), new TreeMap<>());
-            for (String gatherable : category.getValue()) {
-                if (allSkinningPrices.get(gatherable)!=null)
-                    skinningMap.get(category.getKey()).put(gatherable, round(allSkinningPrices.get(gatherable)/10000, 4));
-            }
-        }
-        return skinningMap;
+        return getGatherablePriceMaps(CraftingRecipes.allSkinning(), CraftingRecipes.skinningMap());
     }
 
     public Map<String, Map<String, Double>> getMiningMap() {
-        Map<String, Map<String, Double>> miningMap = new TreeMap<>();
-        Map<String, Double> allMiningPrices = listingsDb.getPrices(CraftingRecipes.allMining());
-        for (Map.Entry<String, List<String>> category : CraftingRecipes.miningMap().entrySet()) {
-            miningMap.put(category.getKey(), new TreeMap<>());
+        return getGatherablePriceMaps(CraftingRecipes.allMining(), CraftingRecipes.miningMap());
+    }
+
+    public Map<String, Map<String, Double>> getGatherablePriceMaps(Set<String> recipes, Map<String, List<String>> categories) {
+        Map<String, Map<String, Double>> categoryMap = new TreeMap<>();
+        Map<String, Double> allPrices = listingsDb.getPrices(recipes);
+        for (Map.Entry<String, List<String>> category : categories.entrySet()) {
+            categoryMap.put(category.getKey(), new TreeMap<>());
             for (String gatherable : category.getValue()) {
-                if (allMiningPrices.get(gatherable)!=null)
-                miningMap.get(category.getKey()).put(gatherable, round(allMiningPrices.get(gatherable)/10000, 4));
+                if (allPrices.get(gatherable)!=null)
+                    categoryMap.get(category.getKey()).put(gatherable, round(allPrices.get(gatherable)/10000, 4));
             }
         }
-        return miningMap;
+        return categoryMap;
     }
 
     public Map<String, List<ProfitEntry>> getProfitEntryMap(Profession profession) {
@@ -97,8 +89,8 @@ public class Dao {
 
     private Map<String, List<ProfitEntry>> getAlchemyData() {
         if (professionCache.isEmpty()) {
-            Map<String, List<Recipe>> mappedRecipes = CraftingRecipes.getAllMapped();
-            Map<String, Double> allItemPrices = getAllItemPricesForRecipes(CraftingRecipes.getAll());
+            Map<String, List<Recipe>> mappedRecipes = CraftingRecipes.getAlchemyMapped();
+            Map<String, Double> allItemPrices = getAllItemPricesForRecipes(CraftingRecipes.getAlchemy());
             Map<String, List<ProfitEntry>> entries = new TreeMap<>();
 
             for (Map.Entry<String, List<Recipe>> entry : mappedRecipes.entrySet()) {
