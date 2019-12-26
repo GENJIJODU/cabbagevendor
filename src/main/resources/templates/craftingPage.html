@@ -14,43 +14,50 @@
           href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" />
 </head>
 <body>
-<h1 style="font-family:poynter; font-size: 40pt" align="center">
-    THE CABBAGE REPORT.
-</h1>
-<div class="container">
-    <div class="containerBody">
-        <th:block th:each="element : ${dataMap}" width="100%">
-            <span style="font-size: 20pt" th:text="${element.key}"/>
-            <br/>
-            <table class="hoverTable">
-                <tr>
-                    <th>Name</th>
-                    <th>Components</th>
-                    <th>Cost to Craft</th>
-                    <th>AH Sale Price</th>
-                    <th>AH Cut</th>
-                    <th>Total Profit</th>
-                </tr>
-                <th:block th:each="entry :${element.value}">
+    <h1 style="font-family:poynter; font-size: 40pt" align="center">
+        THE CABBAGE REPORT.
+    </h1>
+    <div class="container">
+        <div class="containerBody">
+            <th:block th:each="element : ${dataMap}">
+                <span style="font-size: 20pt" th:text="${element.key}"/>
+                <br/>
+                <table>
                     <tr>
-                        <td th:text="'[' + ${entry.name} + ']'"/>
-                        <td>
-                            <th:block th:each="item :${entry.components}">
-                                <a th:text="${item.value} + 'x [' + ${item.key} + ']'" th:href="@{'/itemPage/' + ${item.key}}"/>
-                                <br/>
-                            </th:block>
-                        </td>
-                        <td class="alignRight" th:text="${entry.craftingPrice} + 'g'"/>
-                        <td class="alignRight" th:text="${entry.salePrice} + 'g'"/>
-                        <td class="alignRight" th:text="${entry.ahCut} + 'g'"/>
-                        <td class="alignRight" th:text="${entry.totalprofit} + 'g'"/>
+                        <th>Name</th>
+                        <th>Components</th>
+                        <th>Cost to Craft</th>
+                        <th>Creates</th>
+                        <th>AH Sale Price</th>
+                        <th class="alignRight">AH Cut</th>
+                        <th class="alignRight">Total Profit</th>
                     </tr>
-                </th:block>
-            </table>
-            <br>
-        </th:block>
+                    <th:block th:each="entry :${element.value}">
+                        <tr>
+                            <td th:text="'[' + ${entry.name} + ']'"/>
+                            <td>
+                                <th:block th:each="item :${entry.components}">
+                                    <a th:text="${item.value} + 'x [' + ${item.key} + ']'" th:href="@{'/itemPage/' + ${item.key}}"/>
+                                    <br/>
+                                </th:block>
+                            </td>
+                            <td th:text="${entry.craftingPrice} + 'g'"/>
+                            <td >
+                                <th:block th:each="item :${entry.products}">
+                                    <a th:text="${item.value} + 'x [' + ${item.key} + ']'" th:href="@{'/itemPage/' + ${item.key}}"/>
+                                    <br/>
+                                </th:block>
+                            </td>
+                            <td th:text="${entry.salePrice} + 'g'"/>
+                            <td class="alignRight" th:text="${entry.ahCut} + 'g'"/>
+                            <td class="alignRight" th:text="${entry.totalprofit} + 'g'"/>
+                        </tr>
+                    </th:block>
+                </table>
+                <br>
+            </th:block>
+        </div>
     </div>
-
     <div class="sidebar">
         <form action="#" th:action="@{/itemPage}"   method="post">
             <input list="itemNames" type="string" name="itemName" placeholder="type item name to search ..."/><br/>
@@ -78,7 +85,6 @@
         <a href="/profession/Mining">Mining</a><br/>
         <a href="/profession/Skinning">Skinning</a><br/>
     </div>/
-
 </div>
 </body>
 </html>

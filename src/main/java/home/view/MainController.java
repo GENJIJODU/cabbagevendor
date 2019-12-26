@@ -27,7 +27,7 @@ public class MainController {
     public String generateProfessionPage(@PathVariable String profession, Model model) {
         model.addAttribute("profession", profession);
         model.addAttribute("itemNames", dao.getItemNames());
-        model.addAttribute("profitEntries", dao.getProfitEntryMap(Profession.valueOf(profession)));
+        model.addAttribute("profitEntries", dao.getAlchemyMap());
         return "craftingPage";
     }
 
@@ -35,7 +35,23 @@ public class MainController {
     public String generateProfessionPage(Model model) {
         model.addAttribute("profession", "Alchemy");
         model.addAttribute("itemNames", dao.getItemNames());
-        model.addAttribute("dataMap", dao.getProfitEntryMap(Profession.valueOf("Alchemy")));
+        model.addAttribute("dataMap", dao.getAlchemyMap());
+        return "craftingPage";
+    }
+
+    @RequestMapping("/profession/Cooking")
+    public String generateCookingPage(Model model) {
+        model.addAttribute("profession", "Cooking");
+        model.addAttribute("itemNames", dao.getItemNames());
+        model.addAttribute("dataMap", dao.getCookingMap());
+        return "craftingPage";
+    }
+
+    @RequestMapping("/profession/Engineering")
+    public String generateEngPage(Model model) {
+        model.addAttribute("profession", "Engineering");
+        model.addAttribute("itemNames", dao.getItemNames());
+        model.addAttribute("dataMap", dao.getEngineeringMap());
         return "craftingPage";
     }
 

@@ -16,6 +16,8 @@ body {
     float: left;
 }
 .sidebar {
+    width: 90%;
+    float: right;
     color: black !important;
     position: relative;
     float: right;
@@ -23,9 +25,17 @@ body {
     line-height: 1.4em;
     right: -2em;
 }
+.ver-zebra {
+    font-family: lucida sans unicode,lucida grande,Sans-Serif;
+    font-size: 12px;
+    width: 480px;
+    text-align: left;
+    border-collapse: collapse;
+    margin: 0px 20px 20px;
+}
 
 td, th {
-    padding-right: 5px !important;
+    padding-right: 10px !important;
 }
 
 .alignRight {

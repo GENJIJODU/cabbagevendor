@@ -5,6 +5,7 @@ import java.util.Map;
 public class ProfitEntry {
     private String name;
     private Map<String, Integer> components;
+    public Map<String, Integer> products;
     private Double craftingPrice;
     private Double salePrice;
     private Double ahCut;

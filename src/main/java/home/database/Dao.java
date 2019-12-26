@@ -94,32 +94,22 @@ public class Dao {
         return result;
     }
 
-    public Map<String, List<ProfitEntry>> getProfitEntryMap(Profession profession) {
-        return getAlchemyData();
+    public Map<String, List<ProfitEntry>> getAlchemyMap() {
+        return getProfitEntries(CraftingRecipes.getAllAlchemy(), CraftingRecipes.getAlchemyMap());
     }
 
-    public static <K, V extends Comparable<V>> Map<K, V>
-    sortByValues(final Map<K, V> map) {
-        Comparator<K> valueComparator =
-                (k1, k2) -> {
-                    int compare =
-                            map.get(k2).compareTo(map.get(k1));
-                    if (compare == 0)
-                        return 1;
-                    else
-                        return compare;
-                };
-
-        Map<K, V> sortedByValues =
-                new TreeMap<>(valueComparator);
-        sortedByValues.putAll(map);
-        return sortedByValues;
+    public Map<String, List<ProfitEntry>> getCookingMap() {
+        return getProfitEntries(CraftingRecipes.getAllCooking(), CraftingRecipes.getCookingMapped());
     }
 
-    private Map<String, List<ProfitEntry>> getAlchemyData() {
+    public Map<String, List<ProfitEntry>> getEngineeringMap() {
+        return getProfitEntries(CraftingRecipes.getAllEngineering(), CraftingRecipes.getEngineeringMapped());
+    }
+
+    private Map<String, List<ProfitEntry>> getProfitEntries(List<Recipe> allCooking, Map<String, List<Recipe>> cookingMapped) {
         if (professionCache.isEmpty()) {
-            Map<String, List<Recipe>> mappedRecipes = CraftingRecipes.getAlchemyMapped();
-            Map<String, Double> allItemPrices = getAllItemPricesForRecipes(CraftingRecipes.getAlchemy());
+            Map<String, List<Recipe>> mappedRecipes = cookingMapped;
+            Map<String, Double> allItemPrices = getAllItemPricesForRecipes(allCooking);
             Map<String, List<ProfitEntry>> entries = new TreeMap<>();
 
             for (Map.Entry<String, List<Recipe>> entry : mappedRecipes.entrySet()) {
@@ -142,6 +132,24 @@ public class Dao {
             System.out.println("returning cached profession data....");
             return professionCache;
         }
+    }
+
+    public static <K, V extends Comparable<V>> Map<K, V>
+    sortByValues(final Map<K, V> map) {
+        Comparator<K> valueComparator =
+                (k1, k2) -> {
+                    int compare =
+                            map.get(k2).compareTo(map.get(k1));
+                    if (compare == 0)
+                        return 1;
+                    else
+                        return compare;
+                };
+
+        Map<K, V> sortedByValues =
+                new TreeMap<>(valueComparator);
+        sortedByValues.putAll(map);
+        return sortedByValues;
     }
 
     private void sortByMostProfit(Map<String, List<ProfitEntry>> entries) {
@@ -170,6 +178,7 @@ public class Dao {
         profitEntry.setCraftingPrice(costToCraft);
         profitEntry.setAhCut(ahCut);
         profitEntry.setTotalprofit(totalProfit);
+        profitEntry.products = recipe.getProducts();
         return profitEntry;
     }
 

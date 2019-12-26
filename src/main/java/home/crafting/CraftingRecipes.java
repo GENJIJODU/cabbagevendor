@@ -160,7 +160,7 @@ public class CraftingRecipes {
             "Heavy Scorpid Scale"
     );
 
-    public static Map<String, List<Recipe>> getAlchemyMapped(){
+    public static Map<String, List<Recipe>> getAlchemyMap(){
         Map<String, List<Recipe>> result = new TreeMap<>();
         result.put("Transmutations", getTransmutes());
         result.put("Flasks", getFlasks());
@@ -170,7 +170,7 @@ public class CraftingRecipes {
         result.put("Utility Potions", getUtilityPots());
         return result;
     }
-    public static List<Recipe> getAlchemy() {
+    public static List<Recipe> getAllAlchemy() {
         List<Recipe> result = new ArrayList<>();
         result.addAll(getTransmutes());
         result.addAll(getFlasks());
@@ -480,17 +480,21 @@ public class CraftingRecipes {
 
     public static Map<String, List<Recipe>> getCookingMapped(){
         Map<String, List<Recipe>> result = new TreeMap<>();
-        result.put("High Lvl Food", getAllCooking());
+        result.put("Mana Food", getManaFood());
+        result.put("Melee Food", getMeleeFood());
+        result.put("Stamina Food", getStaminaFood());
         return result;
     }
     public static List<Recipe> getAllCooking() {
         List<Recipe> result = new ArrayList<>();
-        result.addAll(getCookingrecipes());
+        result.addAll(getManaFood());
+        result.addAll(getMeleeFood());
+        result.addAll(getStaminaFood());
         return result;
     }
-    public static List<Recipe> getCookingrecipes() {
-        List<Recipe> endgameFood = new LinkedList<>();
-        endgameFood.add(new Recipe(
+    public static List<Recipe> getManaFood() {
+        List<Recipe> manaFood = new LinkedList<>();
+        manaFood.add(new Recipe(
                 Profession.Cooking,
                 "Recipe: Nightfin Soup",
                 Stream.of(new Object[][]{
@@ -498,7 +502,7 @@ public class CraftingRecipes {
                 new HashMap<>(),
                 Stream.of(new Object[][]{{"Nightfin Soup", 1},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
         ));
-        endgameFood.add(new Recipe(
+        manaFood.add(new Recipe(
                 Profession.Cooking,
                 "Recipe: Runn Tum Tuber Suprise",
                 Stream.of(new Object[][]{
@@ -506,7 +510,11 @@ public class CraftingRecipes {
                 new HashMap<>(),
                 Stream.of(new Object[][]{{"Runn Tum Tuber Surprise", 1},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
         ));
-        endgameFood.add(new Recipe(
+        return manaFood;
+    }
+    public static List<Recipe> getStaminaFood() {
+        List<Recipe> staminaFood = new LinkedList<>();
+        staminaFood.add(new Recipe(
                 Profession.Cooking,
                 "Recipe: Tender Wolf Steak",
                 Stream.of(new Object[][]{
@@ -514,6 +522,174 @@ public class CraftingRecipes {
                 new HashMap<>(),
                 Stream.of(new Object[][]{{"Tender Wolf Steak", 1},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
         ));
-        return endgameFood;
+        staminaFood.add(new Recipe(
+                Profession.Cooking,
+                "Recipe: Monster Omelet",
+                Stream.of(new Object[][]{
+                        {"Giant Egg", 1},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][]{{"Monster Omelet", 1},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        staminaFood.add(new Recipe(
+                Profession.Cooking,
+                "Recipe: Spiced Chili Crab",
+                Stream.of(new Object[][]{
+                        {"Tender Crab Meat", 1},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][]{{"Spiced Chili Crab", 1},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        return staminaFood;
+    }
+    public static List<Recipe> getMeleeFood() {
+        List<Recipe> meleeFood = new LinkedList<>();
+        meleeFood.add(new Recipe(
+                Profession.Cooking,
+                "Recipe: Grilled Squid",
+                Stream.of(new Object[][]{
+                        {"Winter Squid", 1},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][]{{"Grilled Squid", 1},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        meleeFood.add(new Recipe(
+                Profession.Cooking,
+                "Recipe: Thistle Tea",
+                Stream.of(new Object[][]{
+                        {"Swiftthistle", 1},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][]{{"Thistle Tea", 1},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        meleeFood.add(new Recipe(
+                Profession.Cooking,
+                "Recipe: Dragonbreath Chili",
+                Stream.of(new Object[][]{
+                        {"Mystery Meat", 1},
+                        {"Small Flame Sac", 1},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][]{{"Dragonbreath Chili", 1},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        return meleeFood;
+    }
+
+    public static Map<String, List<Recipe>> getEngineeringMapped(){
+        Map<String, List<Recipe>> result = new TreeMap<>();
+        result.put("Explosives", getEngExplosives());
+        result.put("Crafting Materials", getEngCraftMaterials());
+        return result;
+    }
+    public static List<Recipe> getAllEngineering() {
+        List<Recipe> result = new ArrayList<>();
+        result.addAll(getEngExplosives());
+        result.addAll(getEngCraftMaterials());
+        return result;
+    }
+    public static List<Recipe> getEngExplosives() {
+        List<Recipe> explosives = new LinkedList<>();
+        explosives.add(new Recipe(
+                Profession.Engineering,
+                "Recipe: Goblin Sapper Charge",
+                Stream.of(new Object[][]{
+                        {"Mageweave Cloth", 1},
+                        {"Solid Blasting Powder", 3},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][]{{"Goblin Sapper Charge", 1},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        explosives.add(new Recipe(
+                Profession.Engineering,
+                "Recipe: Dense Dynamite",
+                Stream.of(new Object[][]{
+                        {"Runecloth", 3},
+                        {"Dense Blasting Powder", 3},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][]{{"Dense Dynamite", 1},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        explosives.add(new Recipe(
+                Profession.Engineering,
+                "Recipe: Thorium Grenade",
+                Stream.of(new Object[][]{
+                        {"Thorium Widget", 1},
+                        {"Thorium Bar", 3},
+                        {"Runecloth", 3},
+                        {"Dense Blasting Powder", 3},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][]{{"Thorium Grenade", 1},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        explosives.add(new Recipe(
+                Profession.Engineering,
+                "Recipe: Arcane Bomb",
+                Stream.of(new Object[][]{
+                        {"Delicate Aracnite Converter", 1},
+                        {"Thorium Bar", 3},
+                        {"Runecloth", 1},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][]{{"Arcane Bomb", 1},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        explosives.add(new Recipe(
+                Profession.Engineering,
+                "Recipe: Dark Iron Bomb",
+                Stream.of(new Object[][]{
+                        {"Thorium Widget", 1},
+                        {"Dense Blasting Powder", 3},
+                        {"Runecloth", 3},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][]{{ "Dark Iron Bomb", 1},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        return explosives;
+    }
+    public static List<Recipe> getEngCraftMaterials() {
+        List<Recipe> craftMaterials = new LinkedList<>();
+        craftMaterials.add(new Recipe(
+                Profession.Engineering,
+                "Recipe: Delicate Arcanite Converter",
+                Stream.of(new Object[][]{
+                        {"Arcanite Bar", 1},
+                        {"Ironweb Spider Silk", 1}}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][]{{"Delicate Arcanite Converter", 1},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        craftMaterials.add(new Recipe(
+                Profession.Engineering,
+                "Recipe: Fused Wiring",
+                Stream.of(new Object[][]{
+                        {"Delicate Copper Wire", 3},
+                        {"Essence of Fire", 2},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][]{{"Fused Wiring", 1},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        craftMaterials.add(new Recipe(
+                Profession.Engineering,
+                "Recipe: Thorium Tube",
+                Stream.of(new Object[][]{
+                        {"Thorium Bar", 6},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][]{{"Thorium Tube", 1},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        craftMaterials.add(new Recipe(
+                Profession.Engineering,
+                "Recipe: Truesilver Transformer",
+                Stream.of(new Object[][]{
+                        {"Truesilver Bar", 3},
+                        {"Elemental Air", 1},
+                        {"Elemental Earth", 2},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][]{{"Truesilver Transformer", 1},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        craftMaterials.add(new Recipe(
+                Profession.Engineering,
+                "Recipe: Thorium Widget",
+                Stream.of(new Object[][]{
+                        {"Thorium Bar", 3},
+                        {"Runecloth", 1},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][]{{"Thorium Widget", 1},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        craftMaterials.add(new Recipe(
+                Profession.Engineering,
+                "Recipe: Dense Blasting Powder",
+                Stream.of(new Object[][]{
+                        {"Dense Stone", 2},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][]{{"Dense Blasting Powder", 1},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        return craftMaterials;
     }
 }
