@@ -160,6 +160,307 @@ public class CraftingRecipes {
             "Heavy Scorpid Scale"
     );
 
+    public static Map<String, List<Recipe>> getTailoringMapped(){
+        Map<String, List<Recipe>> result = new TreeMap<>();
+        result.put("Bags", getTailoringBags());
+        return result;
+    }
+    public static List<Recipe> getTailoring() {
+        List<Recipe> result = new ArrayList<>();
+        result.addAll(getTailoringBags());
+        return result;
+    }
+    public static List<Recipe> getTailoringBags() {
+        List<Recipe> bags= new LinkedList<>();
+        bags.add(new Recipe(
+                Profession.Tailoring,
+                "Recipe: Bottomless Bag",
+                Stream.of(new Object[][] {
+                        { "Bolt of Runecloth", 8},
+                        { "Mooncloth", 12},
+                        { "Large Brilliant Shard", 2},
+                        { "Core Leather", 2 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][] {{ "Bottomless Bag", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        bags.add(new Recipe(
+                Profession.Tailoring,
+                "Recipe: Big Bag of Enchantment",
+                Stream.of(new Object[][] {
+                        { "Bolt of Runecloth", 6},
+                        { "Enchanted Leather", 4},
+                        { "Large Brilliant Shard", 4},
+                        { "Ironweb Spider Silk", 4 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][] {{ "Big Bag of Enchantment", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        bags.add(new Recipe(
+                Profession.Tailoring,
+                "Recipe: Enchanted Runecloth Bag",
+                Stream.of(new Object[][] {
+                        { "Bolt of Runecloth", 5},
+                        { "Greater Eternal Essence", 2},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][] {{ "Enchanted Runecloth Bag", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        bags.add(new Recipe(
+                Profession.Tailoring,
+                "Recipe: Mooncloth Bag",
+                Stream.of(new Object[][] {
+                        { "Bolt of Runecloth", 4},
+                        { "Mooncloth", 1},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][] {{ "Mooncloth Bag", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        bags.add(new Recipe(
+                Profession.Tailoring,
+                "Recipe: Core Felcloth Bag",
+                Stream.of(new Object[][] {
+                        { "Felcloth", 20},
+                        { "Core Leather", 16},
+                        { "Bloodvine", 8},
+                        { "Essence of Fire", 4},
+                        { "Ironweb Spider Silk", 4 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][] {{ "Core Felcloth Bag", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        bags.add(new Recipe(
+                Profession.Tailoring,
+                "Recipe: Felcloth Bag",
+                Stream.of(new Object[][] {
+                        { "Felcloth", 12},
+                        { "Enchanted Leather", 6},
+                        { "Dark Rune", 2},
+                        { "Ironweb Spider Silk", 4 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][] {{ "Felcloth Bag", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        bags.add(new Recipe(
+                Profession.Tailoring,
+                "Recipe: Cenarion Herb Bag",
+                Stream.of(new Object[][] {
+                        { "Bolt of Runecloth", 5},
+                        { "Purple Lotus", 10},
+                        { "Morrowgrain", 8},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][] {{ "Cenarion Herb Bag", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        bags.add(new Recipe(
+                Profession.Tailoring,
+                "Recipe: Runecloth Bag",
+                Stream.of(new Object[][] {
+                        { "Bolt of Runecloth", 5},
+                        { "Rugged Leather", 2},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][] {{ "Runecloth Bag", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        bags.add(new Recipe(
+                Profession.Tailoring,
+                "Recipe: Mageweave Bag",
+                Stream.of(new Object[][] {
+                        { "Bolt of Mageweave", 4},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][] {{ "Mageweave Bag", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        bags.add(new Recipe(
+                Profession.Tailoring,
+                "Recipe: Small Silk Pack",
+                Stream.of(new Object[][] {
+                        { "Bolt of Silk Cloth", 3},
+                        {"Heavy Leather", 2},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][] {{ "Small Silk Pack", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        bags.add(new Recipe(
+                Profession.Tailoring,
+                "Recipe: Woolen Bag",
+                Stream.of(new Object[][] {
+                        { "Bolt of Woolen Cloth", 3},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][] {{ "Woolen Bag", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        bags.add(new Recipe(
+                Profession.Tailoring,
+                "Recipe: Linen Bag",
+                Stream.of(new Object[][] {
+                        { "Bolt of Linen Cloth", 3},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][] {{ "Linen Bag", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        return bags;
+    }
+    public static List<Recipe> getTailoringGear() {
+        List<Recipe> bags= new LinkedList<>();
+        bags.add(new Recipe(
+                Profession.Tailoring,
+                "Recipe: Glacial CLoak",
+                Stream.of(new Object[][] {
+                        { "Frozen Rune", 5},
+                        { "Bolt of Runecloth", 4},
+                        { "Essence of Water", 2},
+                        { "Ironweb Spider Silk", 4 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][] {{ "Glacial Cloak", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        bags.add(new Recipe(
+                Profession.Tailoring,
+                "Recipe: Gaea's Embrace",
+                Stream.of(new Object[][] {
+                        { "Bloodvine", 1},
+                        { "Mooncloth", 2},
+                        { "Living Essence", 4},
+                        { "Ironweb Spider Silk", 4 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][] {{ "Gaea's Embrace", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        bags.add(new Recipe(
+                Profession.Tailoring,
+                "Recipe: Cloak of Warding",
+                Stream.of(new Object[][] {
+                        { "Bolt of Runecloth", 12},
+                        { "Guardian Stone", 4},
+                        { "Arcanite Bar", 1},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][] {{ "Cloak of Warding", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        bags.add(new Recipe(
+                Profession.Tailoring,
+                "Recipe: Sylvan Vest",
+                Stream.of(new Object[][] {
+                        { "Bolt of Runecloth", 4},
+                        { "Bloodvine", 2},
+                        { "Living Essence", 2},
+                        { "Ironweb Spider Silk", 2},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][] {{ "Sylvan Vest", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        bags.add(new Recipe(
+                Profession.Tailoring,
+                "Recipe: Glacial Vest",
+                Stream.of(new Object[][] {
+                        { "Frozen Rune", 7},
+                        { "Bolt of Runecloth", 8},
+                        { "Essence of Water", 6},
+                        { "Ironweb Spider Silk", 8 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][] {{ "Glacial Vest", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        bags.add(new Recipe(
+                Profession.Tailoring,
+                "Recipe: Flarecore Robe",
+                Stream.of(new Object[][] {
+                        { "Mooncloth", 10},
+                        { "Fiery Core", 2},
+                        { "Lava Core", 3},
+                        { "Essence of FIre", 6},
+                        { "Ironweb Spider Silk", 4 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][] {{ "Flarecore Robe", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        bags.add(new Recipe(
+                Profession.Tailoring,
+                "Recipe: Bloodvine Vest",
+                Stream.of(new Object[][] {
+                        { "Mooncloth", 3},
+                        { "Bolt of Runecloth", 4},
+                        { "Powerful Mojo", 4},
+                        { "Bloodvine", 5},
+                        { "Ironweb Spider Silk", 2},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][] {{ "Bloodvine Vest", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        bags.add(new Recipe(
+                Profession.Tailoring,
+                "Recipe: Bloodvine Boots",
+                Stream.of(new Object[][] {
+                        { "Mooncloth", 3},
+                        { "Bolt of Runecloth", 4},
+                        { "Enchanted Leather", 4},
+                        { "Bloodvine", 3},
+                        { "Ironweb Spider Silk", 4},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][] {{ "Bloodvine Boots", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        bags.add(new Recipe(
+                Profession.Tailoring,
+                "Recipe: Runed Stygian Boots",
+                Stream.of(new Object[][] {
+                        { "Dark Rune", 6},
+                        { "Bolt of Runecloth", 4},
+                        { "Felcloth", 4},
+                        { "Enchanted Leather", 2},
+                        { "Ironweb Spider Silk", 2},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][] {{ "Runed Stygian Boots", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        bags.add(new Recipe(
+                Profession.Tailoring,
+                "Recipe: Glacial Gloves",
+                Stream.of(new Object[][] {
+                        { "Frozen Rune", 5},
+                        { "Bolt of Runecloth", 4},
+                        { "Essence of Water", 4},
+                        { "Ironweb Spider Silk", 2},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][] {{ "Glacial Gloves", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        bags.add(new Recipe(
+                Profession.Tailoring,
+                "Recipe: Inferno Gloves",
+                Stream.of(new Object[][] {
+                        { "Star Ruby", 2},
+                        { "Bolt of Runecloth", 12},
+                        { "Essence of Fire", 10},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][] {{ "Inferno Gloves", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        bags.add(new Recipe(
+                Profession.Tailoring,
+                "Recipe: Flarecore Gloves",
+                Stream.of(new Object[][] {
+                        { "Fiery Core", 6},
+                        { "Essence of Fire", 4},
+                        { "Bolt of Runecloth", 8},
+                        { "Enchanted Leather", 2},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][] {{ "Flarecore Gloves", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        bags.add(new Recipe(
+                Profession.Tailoring,
+                "Recipe: Gloves of Spell Mastery",
+                Stream.of(new Object[][] {
+                        { "Bolt of Runecloth", 10},
+                        { "Mooncloth", 10},
+                        { "Ghost Dye", 10},
+                        { "Golden Pearl", 6},
+                        { "Huge Emerald", 6},
+                        { "Enchanted Leather", 8},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][] {{ "Gloves of Spell Mastery", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        bags.add(new Recipe(
+                Profession.Tailoring,
+                "Recipe: Felcloth Gloves",
+                Stream.of(new Object[][] {
+                        { "Bolt of Runecloth", 12},
+                        { "Felcloth", 20},
+                        { "Demonic Rune", 6},
+                        { "Essence of Undeath", 8},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][] {{ "Felcloth Gloves", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        bags.add(new Recipe(
+                Profession.Tailoring,
+                "Recipe: Runecloth Gloves",
+                Stream.of(new Object[][] {
+                        { "Bolt of Runecloth", 4},
+                        { "Rugged Leather", 4},}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1])),
+                new HashMap<>(),
+                Stream.of(new Object[][] {{ "Runecloth Gloves", 1 },}).collect(Collectors.toMap(data -> (String) data[0], data -> (Integer) data[1]))
+        ));
+        return bags;
+    }
+
     public static Map<String, List<Recipe>> getAlchemyMap(){
         Map<String, List<Recipe>> result = new TreeMap<>();
         result.put("Transmutations", getTransmutes());
